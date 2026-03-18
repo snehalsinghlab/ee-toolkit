@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tools</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;padding:20px}
+</style>
+</head>
+<body>
+
+<h2>🧾 Electricity Bill</h2>
+
+<input id="u" placeholder="Units">
+<button onclick="bill()">Calculate</button>
+
+<div id="r"></div>
+
+<script>
+function bill(){
+let u=parseFloat(document.getElementById("u").value);
+let cost=0;
+
+if(u<=100)cost=u*3;
+else if(u<=200)cost=100*3+(u-100)*5;
+else cost=100*3+100*5+(u-200)*7;
+
+let total=cost+50;
+
+r.innerText="Total ₹"+total;
+}
+</script>
+
+</body>
+</html>
