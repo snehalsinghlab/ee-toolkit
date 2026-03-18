@@ -4,9 +4,7 @@
   <title>Electrical Engineering Calculator | Ohm's Law, Power, Resistance</title>
 
   <meta name="description" content="Free Electrical Engineering Calculator for students. Calculate current, voltage, resistance, power, energy and more.">
-
   <meta name="keywords" content="ohms law calculator, electrical calculator, power calculator, resistance calculator, energy calculator">
-
   <meta name="author" content="EE Toolkit">
 
   <style>
@@ -49,8 +47,13 @@
       color: black;
     }
 
+    option {
+      color: black;
+      background: white;
+    }
+
     button {
-      margin-top: 15px;
+      margin-top: 12px;
       padding: 12px;
       width: 100%;
       border-radius: 10px;
@@ -61,9 +64,21 @@
       cursor: pointer;
     }
 
+    button:hover {
+      background: #4ade80;
+    }
+
     #result {
       margin-top: 15px;
       font-size: 18px;
+      white-space: pre-line;
+    }
+
+    #history {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 14px;
+      color: #cbd5f5;
     }
 
     .info, .ad {
@@ -116,7 +131,11 @@
 
   <button onclick="calculate()">Calculate</button>
 
+  <button onclick="copyResult()">Copy Result</button>
+
   <h3 id="result"></h3>
+
+  <div id="history"></div>
 
 </div>
 
@@ -134,34 +153,60 @@
 </footer>
 
 <script>
+let historyList = [];
+
 function calculate() {
-  let m = document.getElementById("mode").value;
+  let m = mode.value;
   let v1 = parseFloat(value1.value);
   let v2 = parseFloat(value2.value);
 
   if (m !== "U" && (isNaN(v1) || isNaN(v2))) return show("Enter values");
   if (m === "U" && isNaN(v1)) return show("Enter value");
 
-  let r;
+  let r, explanation = "";
 
-  if (m==="I") r=v1/v2;
-  else if (m==="V") r=v1*v2;
-  else if (m==="R") r=v1/v2;
+  if (m==="I"){ r=v1/v2; explanation="Using Ohm’s Law: I = V / R"; }
+  else if (m==="V"){ r=v1*v2; explanation="Using Ohm’s Law: V = I × R"; }
+  else if (m==="R"){ r=v1/v2; explanation="Using Ohm’s Law: R = V / I"; }
 
-  else if (m==="P") r=v1*v2;
-  else if (m==="P1") r=v1*v1*v2;
-  else if (m==="P2") r=(v1*v1)/v2;
+  else if (m==="P"){ r=v1*v2; explanation="Power formula: P = V × I"; }
+  else if (m==="P1"){ r=v1*v1*v2; explanation="Power formula: P = I²R"; }
+  else if (m==="P2"){ r=(v1*v1)/v2; explanation="Power formula: P = V² / R"; }
 
-  else if (m==="E") r=v1*v2;
-  else if (m==="Ek") r=(v1*v2)/1000;
-  else if (m==="Q") r=v1*v2;
+  else if (m==="E"){ r=v1*v2; explanation="Energy = Power × Time"; }
+  else if (m==="Ek"){ r=(v1*v2)/1000; explanation="Energy in kWh"; }
+  else if (m==="Q"){ r=v1*v2; explanation="Charge = Current × Time"; }
 
-  else if (m==="RS") r=v1+v2;
-  else if (m==="RP") r=(v1*v2)/(v1+v2);
+  else if (m==="RS"){ r=v1+v2; explanation="Series: R = R1 + R2"; }
+  else if (m==="RP"){ r=(v1*v2)/(v1+v2); explanation="Parallel: R = (R1×R2)/(R1+R2)"; }
 
-  else if (m==="U") r=v1/1000;
+  else if (m==="U"){ r=v1/1000; explanation="Convert W to kW"; }
 
-  show("Result = " + r);
+  let resultText = "Result = " + r;
+  show(resultText + "\n" + explanation);
+
+  addToHistory(resultText);
+}
+
+function show(t){
+  result.innerText = t;
+}
+
+function addToHistory(entry){
+  historyList.unshift(entry);
+
+  let html = "<h4>History</h4>";
+  historyList.slice(0,5).forEach(e => {
+    html += "<p>" + e + "</p>";
+  });
+
+  document.getElementById("history").innerHTML = html;
+}
+
+function copyResult(){
+  let text = result.innerText;
+  navigator.clipboard.writeText(text);
+  alert("Copied!");
 }
 
 function updateUI() {
@@ -186,10 +231,6 @@ function updateUI() {
     value2.style.display="none";
     label2.style.display="none";
   }
-}
-
-function show(t){
-  result.innerText=t;
 }
 
 updateUI();
