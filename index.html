@@ -3,15 +3,15 @@
 <head>
   <title>Electrical Engineering Calculator | Ohm's Law, Power, Resistance</title>
 
-<meta name="description" content="Free Electrical Engineering Calculator for students. Calculate current, voltage, resistance, and power easily using Ohm's Law formulas.">
+  <meta name="description" content="Free Electrical Engineering Calculator for students. Calculate current, voltage, resistance, power, energy and more.">
 
-<meta name="keywords" content="ohms law calculator, electrical calculator, power calculator, resistance calculator, EE toolkit">
+  <meta name="keywords" content="ohms law calculator, electrical calculator, power calculator, resistance calculator, energy calculator">
 
-<meta name="author" content="EE Toolkit">
+  <meta name="author" content="EE Toolkit">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       margin: 0;
       background: #0f172a;
       color: white;
@@ -23,47 +23,30 @@
       background: #020617;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    header p {
-      color: #94a3b8;
-      font-size: 14px;
-    }
-
     .container {
       max-width: 400px;
       margin: 30px auto;
       padding: 25px;
       border-radius: 15px;
       background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
     }
 
     select, input {
       width: 100%;
       padding: 10px;
-      margin-top: 8px;
+      margin-top: 10px;
       border-radius: 10px;
       border: none;
-      outline: none;
     }
 
     input {
-      background: rgba(255,255,255,0.9);
+      background: white;
       color: black;
     }
 
     select {
-      background: rgba(255,255,255,0.9);
-      color: black;
-    }
-
-    option {
-      color: black;
       background: white;
+      color: black;
     }
 
     button {
@@ -78,40 +61,21 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background: #4ade80;
-    }
-
     #result {
       margin-top: 15px;
       font-size: 18px;
     }
 
-    .info {
+    .info, .ad {
       max-width: 600px;
-      margin: 40px auto;
-      padding: 20px;
-      line-height: 1.6;
-      color: #cbd5f5;
-    }
-
-    .ad {
       margin: 30px auto;
-      max-width: 600px;
       padding: 20px;
-      text-align: center;
-      background: #1e293b;
-      border-radius: 10px;
-      color: #94a3b8;
     }
 
     footer {
       text-align: center;
       padding: 20px;
       background: #020617;
-      margin-top: 40px;
-      font-size: 14px;
-      color: #94a3b8;
     }
   </style>
 </head>
@@ -120,7 +84,7 @@
 
 <header>
   <h1>Electrical Engineering Calculator</h1>
-  <p>Simple Electrical Engineering Calculators for Students</p>
+  <p>All-in-one tool for EE students</p>
 </header>
 
 <div class="container">
@@ -129,9 +93,19 @@
     <option value="I">Current (V / R)</option>
     <option value="V">Voltage (I × R)</option>
     <option value="R">Resistance (V / I)</option>
+
     <option value="P">Power (V × I)</option>
     <option value="P1">Power (I²R)</option>
     <option value="P2">Power (V²/R)</option>
+
+    <option value="E">Energy (Joules)</option>
+    <option value="Ek">Energy (kWh)</option>
+    <option value="Q">Charge</option>
+
+    <option value="RS">Series Resistance</option>
+    <option value="RP">Parallel Resistance</option>
+
+    <option value="U">Convert W → kW</option>
   </select>
 
   <label id="label1">Value 1</label>
@@ -148,77 +122,74 @@
 
 <div class="info">
   <h2>About This Tool</h2>
-  <p>This Electrical Engineering Toolkit helps students quickly calculate current, voltage, resistance, and power using basic formulas like Ohm's Law and Power equations.</p>
-
-  <p>It is designed for quick exam revision, assignments, and concept clarity.</p>
+  <p>This website provides multiple electrical engineering calculators including Ohm’s Law, Power, Energy, and Resistance tools. It helps students solve problems quickly during exams and assignments.</p>
 </div>
 
 <div class="ad">
-  🚀 Ad Space (Google AdSense will go here)
+  🚀 Ad Space (Future Earnings Here)
 </div>
 
 <footer>
-  © 2026 EE Toolkit | About | Contact | Privacy Policy
+  © 2026 EE Toolkit | About | Contact | Privacy
 </footer>
 
 <script>
 function calculate() {
-  let mode = document.getElementById("mode").value;
-  let v1 = parseFloat(document.getElementById("value1").value);
-  let v2 = parseFloat(document.getElementById("value2").value);
+  let m = document.getElementById("mode").value;
+  let v1 = parseFloat(value1.value);
+  let v2 = parseFloat(value2.value);
 
-  if (isNaN(v1) || isNaN(v2)) {
-    return show("Enter valid numbers");
-  }
+  if (m !== "U" && (isNaN(v1) || isNaN(v2))) return show("Enter values");
+  if (m === "U" && isNaN(v1)) return show("Enter value");
 
-  let result;
+  let r;
 
-  if (mode === "I") result = v1 / v2;
-  else if (mode === "V") result = v1 * v2;
-  else if (mode === "R") result = v1 / v2;
-  else if (mode === "P") result = v1 * v2;
-  else if (mode === "P1") result = v1 * v1 * v2;
-  else if (mode === "P2") result = (v1 * v1) / v2;
+  if (m==="I") r=v1/v2;
+  else if (m==="V") r=v1*v2;
+  else if (m==="R") r=v1/v2;
 
-  show("Result = " + result);
+  else if (m==="P") r=v1*v2;
+  else if (m==="P1") r=v1*v1*v2;
+  else if (m==="P2") r=(v1*v1)/v2;
+
+  else if (m==="E") r=v1*v2;
+  else if (m==="Ek") r=(v1*v2)/1000;
+  else if (m==="Q") r=v1*v2;
+
+  else if (m==="RS") r=v1+v2;
+  else if (m==="RP") r=(v1*v2)/(v1+v2);
+
+  else if (m==="U") r=v1/1000;
+
+  show("Result = " + r);
 }
 
 function updateUI() {
-  let mode = document.getElementById("mode").value;
+  let m = mode.value;
 
-  if (mode === "I") {
-    label1.innerText = "Voltage (V)";
-    label2.innerText = "Resistance (Ω)";
-  }
+  value2.style.display="block";
+  label2.style.display="block";
 
-  else if (mode === "V") {
-    label1.innerText = "Current (A)";
-    label2.innerText = "Resistance (Ω)";
-  }
-
-  else if (mode === "R") {
-    label1.innerText = "Voltage (V)";
-    label2.innerText = "Current (A)";
-  }
-
-  else if (mode === "P") {
-    label1.innerText = "Voltage (V)";
-    label2.innerText = "Current (A)";
-  }
-
-  else if (mode === "P1") {
-    label1.innerText = "Current (A)";
-    label2.innerText = "Resistance (Ω)";
-  }
-
-  else if (mode === "P2") {
-    label1.innerText = "Voltage (V)";
-    label2.innerText = "Resistance (Ω)";
+  if (m==="I"){label1.innerText="Voltage";label2.innerText="Resistance";}
+  else if (m==="V"){label1.innerText="Current";label2.innerText="Resistance";}
+  else if (m==="R"){label1.innerText="Voltage";label2.innerText="Current";}
+  else if (m==="P"){label1.innerText="Voltage";label2.innerText="Current";}
+  else if (m==="P1"){label1.innerText="Current";label2.innerText="Resistance";}
+  else if (m==="P2"){label1.innerText="Voltage";label2.innerText="Resistance";}
+  else if (m==="E"){label1.innerText="Power";label2.innerText="Time";}
+  else if (m==="Ek"){label1.innerText="Power";label2.innerText="Hours";}
+  else if (m==="Q"){label1.innerText="Current";label2.innerText="Time";}
+  else if (m==="RS"){label1.innerText="R1";label2.innerText="R2";}
+  else if (m==="RP"){label1.innerText="R1";label2.innerText="R2";}
+  else if (m==="U"){
+    label1.innerText="Watts";
+    value2.style.display="none";
+    label2.style.display="none";
   }
 }
 
-function show(text) {
-  document.getElementById("result").innerText = text;
+function show(t){
+  result.innerText=t;
 }
 
 updateUI();
