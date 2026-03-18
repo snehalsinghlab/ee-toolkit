@@ -36,11 +36,11 @@ body{
   margin-top:20px;
 }
 
-input{
+input, select{
   padding:10px;
   border-radius:8px;
   border:none;
-  width:200px;
+  margin:5px;
 }
 
 button{
@@ -80,60 +80,95 @@ button{
 <h2>📚 Practice Mode</h2>
 
 <div class="card">
-  <h3 id="question">Click Start</h3>
 
-  <input id="answer" placeholder="Enter answer">
+<select id="topic">
+  <option value="mixed">Mixed</option>
+  <option value="ohm">Ohm's Law</option>
+  <option value="power">Power</option>
+  <option value="energy">Energy</option>
+</select>
 
-  <br>
-  <button onclick="check()">Submit</button>
-  <button onclick="nextQ()">Next Question</button>
+<select id="difficulty">
+  <option value="easy">Easy</option>
+  <option value="medium">Medium</option>
+  <option value="hard">Hard</option>
+</select>
 
-  <div class="result" id="feedback"></div>
+<h3 id="question">Click Start</h3>
+
+<input id="answer" placeholder="Enter answer">
+
+<br>
+
+<button onclick="start()">Start</button>
+<button onclick="check()">Submit</button>
+<button onclick="nextQ()">Next</button>
+
+<div class="result" id="feedback"></div>
+
 </div>
 
 <div class="card">
   <h3>🏆 Stats</h3>
   <p>Score: <span id="score">0</span></p>
   <p>Streak: <span id="streak">0</span></p>
+  <p>High Score: <span id="high">0</span></p>
+  <p>⏱ Time Left: <span id="time">30</span>s</p>
 </div>
 
 </div>
 
 <script>
 
-let score=0;
-let streak=0;
+let score=0, streak=0, high=0;
 let currentAnswer=0;
+let timer=30;
+let interval;
+
+function start(){
+score=0;
+streak=0;
+timer=30;
+updateStats();
+nextQ();
+
+clearInterval(interval);
+interval=setInterval(()=>{
+timer--;
+document.getElementById("time").innerText=timer;
+
+if(timer<=0){
+clearInterval(interval);
+feedback.innerText="⏰ Time's up!";
+}
+},1000);
+}
 
 function nextQ(){
 
-let type=Math.floor(Math.random()*4);
+let topic=document.getElementById("topic").value;
+let diff=document.getElementById("difficulty").value;
+
+let range = diff==="easy"?10:diff==="medium"?50:100;
 
 let q,a;
 
-if(type===0){
-let V=Math.floor(Math.random()*100)+10;
+if(topic==="ohm" || topic==="mixed"){
+let V=Math.floor(Math.random()*range)+10;
 let R=Math.floor(Math.random()*10)+1;
 a=V/R;
 q=`Find Current: V=${V}V, R=${R}Ω`;
 }
 
-if(type===1){
-let I=Math.floor(Math.random()*10)+1;
-let R=Math.floor(Math.random()*10)+1;
-a=I*R;
-q=`Find Voltage: I=${I}A, R=${R}Ω`;
-}
-
-if(type===2){
-let V=Math.floor(Math.random()*100)+10;
+if(topic==="power"){
+let V=Math.floor(Math.random()*range)+10;
 let I=Math.floor(Math.random()*10)+1;
 a=V*I;
 q=`Find Power: V=${V}V, I=${I}A`;
 }
 
-if(type===3){
-let P=Math.floor(Math.random()*500)+50;
+if(topic==="energy"){
+let P=Math.floor(Math.random()*range)+50;
 let t=Math.floor(Math.random()*5)+1;
 a=P*t;
 q=`Find Energy: P=${P}W, t=${t}hr`;
@@ -157,6 +192,7 @@ return;
 if(Math.abs(user-currentAnswer)<0.1){
 score++;
 streak++;
+if(score>high) high=score;
 feedback.innerText="✅ Correct!";
 }
 else{
@@ -164,8 +200,13 @@ streak=0;
 feedback.innerText=`❌ Wrong! Correct: ${currentAnswer}`;
 }
 
+updateStats();
+}
+
+function updateStats(){
 document.getElementById("score").innerText=score;
 document.getElementById("streak").innerText=streak;
+document.getElementById("high").innerText=high;
 }
 
 </script>
