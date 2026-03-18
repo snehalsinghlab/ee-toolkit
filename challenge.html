@@ -36,11 +36,10 @@ body{
   margin-top:20px;
 }
 
-input{
+input, select{
   padding:10px;
   border-radius:8px;
   border:none;
-  width:200px;
 }
 
 button{
@@ -53,7 +52,7 @@ button{
 }
 
 .result{
-  margin-top:15px;
+  margin-top:10px;
   padding:10px;
   background:#020617;
   border-radius:8px;
@@ -71,15 +70,20 @@ button{
     <a href="calculations.html">Calculations</a>
     <a href="practice.html">Practice</a>
     <a href="challenge.html">Challenge</a>
-    <a href="tools.html">Tools</a>
   </div>
 </div>
 
 <div class="container">
 
-<h2>🔥 Daily Challenge Mode</h2>
+<h2>🔥 Challenge Mode</h2>
 
-<div class="card" id="game">
+<div class="card">
+
+<select id="difficulty">
+  <option value="easy">Easy</option>
+  <option value="medium">Medium</option>
+  <option value="hard">Hard</option>
+</select>
 
 <h3 id="qno">Question 1 / 10</h3>
 <h3 id="question">Click Start</h3>
@@ -99,12 +103,19 @@ button{
   <h3>🏆 Stats</h3>
   <p>Score: <span id="score">0</span></p>
   <p>Best Score: <span id="best">0</span></p>
+  <p>🔥 Streak: <span id="streak">0</span></p>
   <p>⏱ Time Left: <span id="time">60</span>s</p>
+</div>
+
+<div class="card">
+  <h3>🏆 Leaderboard</h3>
+  <ul id="leaderboard"></ul>
 </div>
 
 <div class="card" id="final" style="display:none;">
   <h2>🎉 Challenge Complete</h2>
   <p>Your Score: <span id="finalScore"></span>/10</p>
+  <p id="message"></p>
   <button onclick="restart()">Play Again</button>
 </div>
 
@@ -112,13 +123,18 @@ button{
 
 <script>
 
-let score=0;
-let best=0;
-let qIndex=0;
-let total=10;
+let score=0, best=0, streak=0;
+let qIndex=0, total=10;
 let currentAnswer=0;
 let timer=60;
 let interval;
+
+// LOAD DATA
+if(localStorage.getItem("best")) best=parseInt(localStorage.getItem("best"));
+if(localStorage.getItem("streak")) streak=parseInt(localStorage.getItem("streak"));
+
+updateStats();
+loadLeaderboard();
 
 function start(){
 score=0;
@@ -131,11 +147,9 @@ document.getElementById("final").style.display="none";
 clearInterval(interval);
 interval=setInterval(()=>{
 timer--;
-document.getElementById("time").innerText=timer;
+time.innerText=timer;
 
-if(timer<=0){
-endGame();
-}
+if(timer<=0) endGame();
 },1000);
 
 nextQ();
@@ -149,15 +163,17 @@ return;
 }
 
 qIndex++;
+qno.innerText=`Question ${qIndex} / ${total}`;
 
-document.getElementById("qno").innerText=`Question ${qIndex} / ${total}`;
+let diff=document.getElementById("difficulty").value;
+let range = diff==="easy"?20:diff==="medium"?50:100;
 
 let type=Math.floor(Math.random()*4);
 
 let q,a;
 
 if(type===0){
-let V=Math.floor(Math.random()*100)+10;
+let V=Math.floor(Math.random()*range)+10;
 let R=Math.floor(Math.random()*10)+1;
 a=V/R;
 q=`Find Current: V=${V}V, R=${R}Ω`;
@@ -171,7 +187,7 @@ q=`Find Voltage: I=${I}A, R=${R}Ω`;
 }
 
 if(type===2){
-let V=Math.floor(Math.random()*100)+10;
+let V=Math.floor(Math.random()*range)+10;
 let I=Math.floor(Math.random()*10)+1;
 a=V*I;
 q=`Find Power: V=${V}V, I=${I}A`;
@@ -186,14 +202,14 @@ q=`Find Energy: P=${P}W, t=${t}hr`;
 
 currentAnswer=a.toFixed(2);
 
-document.getElementById("question").innerText=q;
-document.getElementById("answer").value="";
-document.getElementById("feedback").innerText="";
+question.innerText=q;
+answer.value="";
+feedback.innerText="";
 }
 
 function submitAns(){
 
-let user=parseFloat(document.getElementById("answer").value);
+let user=parseFloat(answer.value);
 
 if(isNaN(user)){
 feedback.innerText="Enter valid number";
@@ -212,26 +228,75 @@ updateStats();
 
 setTimeout(()=>{
 nextQ();
-},800);
+},600);
 }
 
 function updateStats(){
-document.getElementById("score").innerText=score;
-document.getElementById("best").innerText=best;
+scoreSpan = document.getElementById("score");
+bestSpan = document.getElementById("best");
+streakSpan = document.getElementById("streak");
+
+scoreSpan.innerText=score;
+bestSpan.innerText=best;
+streakSpan.innerText=streak;
 }
 
 function endGame(){
 clearInterval(interval);
 
-if(score>best) best=score;
+if(score>best){
+best=score;
+localStorage.setItem("best",best);
+}
 
-document.getElementById("finalScore").innerText=score;
+if(score>=7){
+streak++;
+localStorage.setItem("streak",streak);
+}
+else{
+streak=0;
+localStorage.setItem("streak",streak);
+}
+
+saveLeaderboard(score);
+
+finalScore.innerText=score;
+
+let msg = score>=8?"🔥 Excellent!":
+          score>=5?"👍 Good job!":
+          "😅 Try again!";
+
+message.innerText=msg;
 
 document.getElementById("final").style.display="block";
+
+updateStats();
+loadLeaderboard();
 }
 
 function restart(){
 start();
+}
+
+function saveLeaderboard(score){
+let lb = JSON.parse(localStorage.getItem("lb")) || [];
+lb.push(score);
+lb.sort((a,b)=>b-a);
+lb = lb.slice(0,5);
+localStorage.setItem("lb",JSON.stringify(lb));
+}
+
+function loadLeaderboard(){
+let lb = JSON.parse(localStorage.getItem("lb")) || [];
+let list = document.getElementById("leaderboard");
+
+list.innerHTML="";
+
+lb.forEach((s,i)=>{
+let li=document.createElement("li");
+li.innerText=`${i+1}. Score: ${s}`;
+list.appendChild(li);
+});
 }
 
 </script>
