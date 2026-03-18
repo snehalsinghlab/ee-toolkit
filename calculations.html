@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calculations</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;padding:20px}
+input,select,button{width:100%;padding:10px;margin-top:10px}
+.box{margin-top:10px;background:#1e293b;padding:10px}
+</style>
+</head>
+<body>
+
+<h2>🔢 Electrical Calculations</h2>
+
+<select id="mode">
+<option value="I">Current (V/R)</option>
+<option value="V">Voltage (I×R)</option>
+<option value="R">Resistance (V/I)</option>
+
+<option value="P">Power (V×I)</option>
+<option value="P1">Power (I²R)</option>
+<option value="P2">Power (V²/R)</option>
+
+<option value="E">Energy (Pt)</option>
+<option value="Eff">Efficiency</option>
+
+<option value="RS">Series Resistance</option>
+<option value="RP">Parallel Resistance</option>
+
+<option value="TR">Transformer Ratio</option>
+</select>
+
+<input id="a" placeholder="Value 1">
+<input id="b" placeholder="Value 2">
+
+<button onclick="calc()">Calculate</button>
+
+<div class="box" id="res"></div>
+
+<script>
+function calc(){
+let m=mode.value,a=parseFloat(a.value),b=parseFloat(b.value);
+let r,txt="";
+
+if(m==="I"){r=a/b;txt="I=V/R";}
+if(m==="V"){r=a*b;txt="V=IR";}
+if(m==="R"){r=a/b;txt="R=V/I";}
+
+if(m==="P"){r=a*b;txt="P=VI";}
+if(m==="P1"){r=a*a*b;txt="P=I²R";}
+if(m==="P2"){r=(a*a)/b;txt="P=V²/R";}
+
+if(m==="E"){r=a*b;txt="E=Pt";}
+if(m==="Eff"){r=(a/b)*100;txt="Efficiency=(Output/Input)×100";}
+
+if(m==="RS"){r=a+b;txt="R=R1+R2";}
+if(m==="RP"){r=(a*b)/(a+b);txt="R=(R1R2)/(R1+R2)";}
+
+if(m==="TR"){r=a/b;txt="V1/V2=N1/N2";}
+
+res.innerText="Result: "+r.toFixed(2)+"\n"+txt;
+}
+</script>
+
+</body>
+</html>
