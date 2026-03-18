@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EE Toolkit</title>
+<title>EE Toolkit - Learn & Practice Electrical Engineering</title>
+
+<meta name="description" content="Free Electrical Engineering Toolkit with calculators, practice questions, and challenge mode for students.">
 
 <style>
 body{
   margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#0f172a,#020617);
+  font-family:'Segoe UI';
+  background:#0f172a;
   color:white;
 }
 
@@ -17,12 +19,6 @@ body{
   justify-content:space-between;
   padding:15px 25px;
   background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
-}
-
-.logo{
-  font-weight:bold;
-  font-size:18px;
 }
 
 .nav-links a{
@@ -34,49 +30,59 @@ body{
 /* HERO */
 .hero{
   text-align:center;
-  padding:60px 20px;
+  padding:50px 20px;
 }
 
 .hero h1{
   font-size:32px;
 }
 
-.hero p{
-  color:#94a3b8;
+/* QUICK NAV */
+.quick-nav{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:20px;
 }
 
-/* BUTTONS */
-.btn{
-  display:inline-block;
-  margin:10px;
-  padding:12px 18px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#22c55e,#4ade80);
-  color:black;
-  text-decoration:none;
-  font-weight:bold;
+.quick-nav button{
+  background:#22c55e;
+  border:none;
+  padding:10px 15px;
+  border-radius:20px;
+  cursor:pointer;
 }
 
-/* SECTIONS */
-.section{
-  max-width:900px;
-  margin:40px auto;
+/* CONTENT */
+.container{
   padding:20px;
-}
-
-/* CARDS */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:15px;
 }
 
 .card{
+  background:#1e293b;
   padding:20px;
   border-radius:12px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
+  margin-top:20px;
   text-align:center;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+/* FEEDBACK */
+textarea{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-top:10px;
 }
 </style>
 
@@ -86,36 +92,70 @@ body{
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <div class="logo">⚡ EE Toolkit</div>
+  <div>⚡ EE Toolkit</div>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="calculations.html">Calculations</a>
     <a href="practice.html">Practice</a>
     <a href="challenge.html">Challenge</a>
-    <a href="tools.html">Tools</a>
   </div>
 </div>
 
 <!-- HERO -->
 <div class="hero">
-  <h1>Your Electrical Engineering Companion</h1>
-  <p>Solve numericals • Learn formulas • Practice like exam</p>
+  <h1>⚡ Electrical Engineering Made Simple</h1>
+  <p>Calculate • Practice • Challenge Yourself</p>
 
-  <a href="calculations.html" class="btn">Start Calculating</a>
-  <a href="practice.html" class="btn">Practice Now</a>
-</div>
-
-<!-- FEATURES -->
-<div class="section">
-  <h2>🚀 What You Get</h2>
-
-  <div class="cards">
-    <div class="card">🔢 Smart Calculations</div>
-    <div class="card">🧠 Formula Helper</div>
-    <div class="card">📚 Exam Practice</div>
-    <div class="card">🎯 Challenges</div>
+  <!-- QUICK NAV -->
+  <h3>⚡ Quick Access</h3>
+  <div class="quick-nav">
+    <button onclick="go('calculations.html')">⚡ Ohm Law</button>
+    <button onclick="go('calculations.html')">🔋 Power</button>
+    <button onclick="go('calculations.html')">🔁 Transformer</button>
+    <button onclick="go('practice.html')">📚 Practice</button>
+    <button onclick="go('challenge.html')">🔥 Challenge</button>
   </div>
 </div>
+
+<!-- CONTENT -->
+<div class="container">
+
+<div class="card">
+  <h3>⚡ Calculations</h3>
+  <p>Solve formulas with step-by-step solutions</p>
+  <button onclick="go('calculations.html')">Open</button>
+</div>
+
+<div class="card">
+  <h3>📚 Practice Mode</h3>
+  <p>Practice unlimited numericals with score</p>
+  <button onclick="go('practice.html')">Start Practice</button>
+</div>
+
+<div class="card">
+  <h3>🔥 Challenge Mode</h3>
+  <p>Attempt 10 questions under time pressure</p>
+  <button onclick="go('challenge.html')">Start Challenge</button>
+</div>
+
+<div class="card">
+  <h3>💬 Feedback</h3>
+  <p>Help us improve</p>
+  <textarea placeholder="Write your feedback..."></textarea>
+  <button onclick="thanks()">Submit</button>
+</div>
+
+</div>
+
+<script>
+function go(page){
+  window.location.href=page;
+}
+
+function thanks(){
+  alert("Thank you for your feedback ❤️");
+}
+</script>
 
 </body>
 </html>
