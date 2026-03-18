@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>EE Calculator Gamified</title>
+  <title>EE Toolkit Game</title>
 
   <style>
     body {
@@ -18,7 +18,7 @@
     }
 
     .container {
-      max-width: 400px;
+      max-width: 420px;
       margin: 20px auto;
       padding: 20px;
       background: rgba(255,255,255,0.05);
@@ -57,11 +57,11 @@
       color: #a5b4fc;
     }
 
-    .challenge {
+    .box {
       margin-top: 20px;
-      background: rgba(255,255,255,0.05);
       padding: 10px;
       border-radius: 10px;
+      background: rgba(255,255,255,0.05);
     }
   </style>
 </head>
@@ -69,7 +69,7 @@
 <body>
 
 <header>
-  <h1>⚡ EE Calculator Game</h1>
+  <h1>⚡ EE Toolkit Game</h1>
 </header>
 
 <div class="container">
@@ -81,9 +81,22 @@
   </div>
 
   <select id="mode">
-    <option value="I">Current</option>
-    <option value="V">Voltage</option>
-    <option value="R">Resistance</option>
+    <option value="I">Current (V/R)</option>
+    <option value="V">Voltage (I×R)</option>
+    <option value="R">Resistance (V/I)</option>
+
+    <option value="P">Power (V×I)</option>
+    <option value="P1">Power (I²R)</option>
+    <option value="P2">Power (V²/R)</option>
+
+    <option value="E">Energy (J)</option>
+    <option value="Ek">Energy (kWh)</option>
+    <option value="Q">Charge</option>
+
+    <option value="RS">Series Resistance</option>
+    <option value="RP">Parallel Resistance</option>
+
+    <option value="U">Convert W → kW</option>
   </select>
 
   <input id="value1" type="number" placeholder="Value 1">
@@ -93,11 +106,18 @@
 
   <h3 id="result"></h3>
 
-  <div class="challenge">
-    <button onclick="generateChallenge()">🎯 Challenge Me</button>
+  <div class="box">
+    <h3>🎯 Challenge</h3>
+    <button onclick="generateChallenge()">New Challenge</button>
     <p id="question"></p>
     <input id="answer" placeholder="Your answer">
     <button onclick="checkAnswer()">Submit</button>
+  </div>
+
+  <div class="box">
+    <h3>🏆 Leaderboard</h3>
+    <button onclick="saveScore()">Save Score</button>
+    <div id="leaderboard"></div>
   </div>
 
 </div>
@@ -106,6 +126,17 @@
 let score = 0;
 let streak = 0;
 let correctAnswer = 0;
+
+// LOAD
+if(localStorage.getItem("score")){
+  score = parseInt(localStorage.getItem("score"));
+  streak = parseInt(localStorage.getItem("streak"));
+}
+
+function saveProgress(){
+  localStorage.setItem("score", score);
+  localStorage.setItem("streak", streak);
+}
 
 function updateStats(){
   scoreEl.innerText = score;
@@ -116,27 +147,43 @@ function updateStats(){
   if(score > 150) level = "Pro";
 
   levelEl.innerText = level;
+
+  saveProgress();
 }
 
+// CALCULATOR (FULL + UNITS)
 function calculate(){
+  let m = mode.value;
   let v1 = parseFloat(value1.value);
   let v2 = parseFloat(value2.value);
-  let m = mode.value;
 
-  if(isNaN(v1) || isNaN(v2)){
+  if(m !== "U" && (isNaN(v1) || isNaN(v2))){
     result.innerText = "Enter values";
     return;
   }
 
-  let r;
+  let r, unit="";
 
-  if(m==="I") r = v1/v2;
-  if(m==="V") r = v1*v2;
-  if(m==="R") r = v1/v2;
+  if(m==="I"){ r=v1/v2; unit="A"; }
+  else if(m==="V"){ r=v1*v2; unit="V"; }
+  else if(m==="R"){ r=v1/v2; unit="Ω"; }
+
+  else if(m==="P"){ r=v1*v2; unit="W"; }
+  else if(m==="P1"){ r=v1*v1*v2; unit="W"; }
+  else if(m==="P2"){ r=(v1*v1)/v2; unit="W"; }
+
+  else if(m==="E"){ r=v1*v2; unit="J"; }
+  else if(m==="Ek"){ r=(v1*v2)/1000; unit="kWh"; }
+  else if(m==="Q"){ r=v1*v2; unit="C"; }
+
+  else if(m==="RS"){ r=v1+v2; unit="Ω"; }
+  else if(m==="RP"){ r=(v1*v2)/(v1+v2); unit="Ω"; }
+
+  else if(m==="U"){ r=v1/1000; unit="kW"; }
 
   r = Math.round(r*100)/100;
 
-  result.innerText = "Result = " + r;
+  result.innerText = "Result = " + r + " " + unit;
 
   score += 10;
   streak += 1;
@@ -144,8 +191,9 @@ function calculate(){
   updateStats();
 }
 
+// CHALLENGE
 function generateChallenge(){
-  let v = Math.floor(Math.random()*10)+1;
+  let v = Math.floor(Math.random()*20)+1;
   let r = Math.floor(Math.random()*10)+1;
 
   correctAnswer = v/r;
@@ -168,11 +216,38 @@ function checkAnswer(){
   updateStats();
 }
 
+// LEADERBOARD
+function saveScore(){
+  let name = prompt("Enter your name:");
+  if(!name) return;
+
+  let data = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+  data.push({name, score});
+  data.sort((a,b)=>b.score-a.score);
+
+  localStorage.setItem("leaderboard", JSON.stringify(data));
+  showLeaderboard();
+}
+
+function showLeaderboard(){
+  let data = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+  let html = "";
+  data.slice(0,5).forEach((p,i)=>{
+    html += "<p>"+(i+1)+". "+p.name+" - "+p.score+"</p>";
+  });
+
+  leaderboard.innerHTML = html;
+}
+
 let scoreEl = document.getElementById("score");
 let streakEl = document.getElementById("streak");
 let levelEl = document.getElementById("level");
+let leaderboard = document.getElementById("leaderboard");
 
 updateStats();
+showLeaderboard();
 </script>
 
 </body>
