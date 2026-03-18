@@ -1,159 +1,276 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EE Calculator</title>
+  <title>EE Toolkit</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 50px 20px;
+      align-items: center;
+      height: 100vh;
+      color: white;
     }
 
-    .calculator-container {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
+    .container {
+      background: rgba(255, 255, 255, 0.08);
       padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      max-width: 450px;
-      width: 100%;
-    }
-
-    h1 {
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      width: 320px;
       text-align: center;
-      margin-bottom: 20px;
-      color: #007bff;
     }
 
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    input {
-      color: black; /* text inside input */
-      background: rgba(255, 255, 255, 0.8); /* semi-glass background */
+    select, input {
+      width: 100%;
       padding: 10px;
+      margin-top: 8px;
       border-radius: 10px;
       border: none;
       outline: none;
-      width: 100%;
-      margin-top: 5px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      font-size: 16px;
+      background: rgba(255, 255, 255, 0.15);
     }
 
-    input:focus {
-      box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+    /* FIX DROPDOWN VISIBILITY */
+    select {
+      color: black;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    option {
+      color: black;
+      background: white;
     }
 
     button {
-      width: 100%;
-      background-color: #007bff;
-      color: white;
-      padding: 12px;
       margin-top: 15px;
-      border: none;
+      padding: 12px;
+      width: 100%;
       border-radius: 10px;
-      font-size: 16px;
+      border: none;
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      color: black;
+      font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
     }
 
     button:hover {
-      background-color: #0056b3;
+      transform: scale(1.05);
     }
 
-    .result {
+    #result {
       margin-top: 20px;
-      padding: 15px;
-      background-color: #e9ecef;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
       font-size: 18px;
-    }
-
-    .ad-space {
-      margin: 20px 0;
-      height: 90px;
-      background-color: #f1f1f1;
-      border: 1px dashed #ccc;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-size: 14px;
-      border-radius: 10px;
     }
   </style>
 </head>
+
 <body>
 
-  <div class="calculator-container">
-    <h1>Electrical Engineering Calculator</h1>
+<div class="container">
 
-    <!-- Ohm's Law -->
-    <label for="voltage">Voltage (V)</label>
-    <input type="number" id="voltage" placeholder="Enter voltage">
+  <h2>⚡ EE Toolkit</h2>
 
-    <label for="current">Current (A)</label>
-    <input type="number" id="current" placeholder="Enter current">
+  <select id="mode" onchange="updateUI()">
+    <option value="I">Current (V / R)</option>
+    <option value="V">Voltage (I × R)</option>
+    <option value="R">Resistance (V / I)</option>
 
-    <label for="resistance">Resistance (Ω)</label>
-    <input type="number" id="resistance" placeholder="Enter resistance">
+    <option value="P">Power (V × I)</option>
+    <option value="P1">Power (I²R)</option>
+    <option value="P2">Power (V²/R)</option>
 
-    <!-- Power -->
-    <label for="power">Power (W)</label>
-    <input type="number" id="power" placeholder="Enter power">
+    <option value="E">Energy (Joules)</option>
+    <option value="Ek">Energy (kWh)</option>
+    <option value="Q">Charge</option>
 
-    <button onclick="calculateAll()">Calculate</button>
+    <option value="RS">Series Resistance</option>
+    <option value="RP">Parallel Resistance</option>
 
-    <div class="result" id="result">Result will appear here</div>
+    <option value="U">Convert W → kW</option>
+  </select>
 
-    <div class="ad-space">Ad goes here (Google AdSense)</div>
-  </div>
+  <br><br>
 
-  <script>
-    function calculateAll() {
-      const V = parseFloat(document.getElementById('voltage').value);
-      const I = parseFloat(document.getElementById('current').value);
-      const R = parseFloat(document.getElementById('resistance').value);
-      const P = parseFloat(document.getElementById('power').value);
+  <label id="label1">Value 1</label>
+  <input type="number" id="value1">
 
-      let resultText = '';
+  <br><br>
 
-      // Ohm's Law calculations
-      if (!isNaN(V) && !isNaN(I)) {
-        resultText += `Resistance = ${(V/I).toFixed(2)} Ω\n`;
-      } else if (!isNaN(V) && !isNaN(R)) {
-        resultText += `Current = ${(V/R).toFixed(2)} A\n`;
-      } else if (!isNaN(I) && !isNaN(R)) {
-        resultText += `Voltage = ${(I*R).toFixed(2)} V\n`;
-      }
+  <label id="label2">Value 2</label>
+  <input type="number" id="value2">
 
-      // Power calculations
-      if (!isNaN(V) && !isNaN(I)) {
-        resultText += `Power = ${(V*I).toFixed(2)} W`;
-      } else if (!isNaN(I) && !isNaN(R)) {
-        resultText += `Power = ${(I*I*R).toFixed(2)} W`;
-      } else if (!isNaN(V) && !isNaN(R)) {
-        resultText += `Power = ${(V*V/R).toFixed(2)} W`;
-      }
+  <br><br>
 
-      if (resultText === '') {
-        resultText = 'Please enter at least two values to calculate the others.';
-      }
+  <button onclick="calculate()">Calculate</button>
 
-      document.getElementById('result').innerText = resultText;
-    }
-  </script>
+  <h3 id="result"></h3>
+
+</div>
+
+<script>
+function calculate() {
+  let mode = document.getElementById("mode").value;
+  let val1 = parseFloat(document.getElementById("value1").value);
+  let val2 = parseFloat(document.getElementById("value2").value);
+
+  if (mode !== "U" && (isNaN(val1) || isNaN(val2))) {
+    return show("Please enter valid numbers");
+  }
+
+  if (mode === "U" && isNaN(val1)) {
+    return show("Enter a valid number");
+  }
+
+  let result;
+
+  if (mode === "I") {
+    if (val2 === 0) return show("Resistance cannot be zero");
+    result = val1 / val2;
+    show("Current = " + result + " A");
+  }
+
+  else if (mode === "V") {
+    result = val1 * val2;
+    show("Voltage = " + result + " V");
+  }
+
+  else if (mode === "R") {
+    if (val2 === 0) return show("Current cannot be zero");
+    result = val1 / val2;
+    show("Resistance = " + result + " Ω");
+  }
+
+  else if (mode === "P") {
+    result = val1 * val2;
+    show("Power = " + result + " W");
+  }
+
+  else if (mode === "P1") {
+    result = val1 * val1 * val2;
+    show("Power = " + result + " W");
+  }
+
+  else if (mode === "P2") {
+    if (val2 === 0) return show("Resistance cannot be zero");
+    result = (val1 * val1) / val2;
+    show("Power = " + result + " W");
+  }
+
+  else if (mode === "E") {
+    result = val1 * val2;
+    show("Energy = " + result + " J");
+  }
+
+  else if (mode === "Ek") {
+    result = (val1 * val2) / 1000;
+    show("Energy = " + result + " kWh");
+  }
+
+  else if (mode === "Q") {
+    result = val1 * val2;
+    show("Charge = " + result + " C");
+  }
+
+  else if (mode === "RS") {
+    result = val1 + val2;
+    show("Total Resistance = " + result + " Ω");
+  }
+
+  else if (mode === "RP") {
+    if (val1 + val2 === 0) return show("Invalid values");
+    result = (val1 * val2) / (val1 + val2);
+    show("Total Resistance = " + result + " Ω");
+  }
+
+  else if (mode === "U") {
+    result = val1 / 1000;
+    show("Power = " + result + " kW");
+  }
+}
+
+function updateUI() {
+  let mode = document.getElementById("mode").value;
+
+  let label1 = document.getElementById("label1");
+  let label2 = document.getElementById("label2");
+  let input2 = document.getElementById("value2");
+
+  input2.style.display = "block";
+  label2.style.display = "block";
+
+  if (mode === "I") {
+    label1.innerText = "Voltage (V)";
+    label2.innerText = "Resistance (Ω)";
+  }
+
+  else if (mode === "V") {
+    label1.innerText = "Current (A)";
+    label2.innerText = "Resistance (Ω)";
+  }
+
+  else if (mode === "R") {
+    label1.innerText = "Voltage (V)";
+    label2.innerText = "Current (A)";
+  }
+
+  else if (mode === "P") {
+    label1.innerText = "Voltage (V)";
+    label2.innerText = "Current (A)";
+  }
+
+  else if (mode === "P1") {
+    label1.innerText = "Current (A)";
+    label2.innerText = "Resistance (Ω)";
+  }
+
+  else if (mode === "P2") {
+    label1.innerText = "Voltage (V)";
+    label2.innerText = "Resistance (Ω)";
+  }
+
+  else if (mode === "E") {
+    label1.innerText = "Power (W)";
+    label2.innerText = "Time (s)";
+  }
+
+  else if (mode === "Ek") {
+    label1.innerText = "Power (W)";
+    label2.innerText = "Time (hours)";
+  }
+
+  else if (mode === "Q") {
+    label1.innerText = "Current (A)";
+    label2.innerText = "Time (s)";
+  }
+
+  else if (mode === "RS") {
+    label1.innerText = "R1 (Ω)";
+    label2.innerText = "R2 (Ω)";
+  }
+
+  else if (mode === "RP") {
+    label1.innerText = "R1 (Ω)";
+    label2.innerText = "R2 (Ω)";
+  }
+
+  else if (mode === "U") {
+    label1.innerText = "Power (W)";
+    input2.style.display = "none";
+    label2.style.display = "none";
+  }
+}
+
+updateUI();
+
+function show(text) {
+  document.getElementById("result").innerText = text;
+}
+</script>
+
 </body>
 </html>
