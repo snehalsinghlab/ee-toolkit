@@ -50,7 +50,7 @@ button{
 
 <h2>⚡ Electrical Engineering Calculations</h2>
 
-<!-- OHM + POWER -->
+<!-- BASIC -->
 <div class="section">
 <h3>🔌 Basic (Ohm + Power)</h3>
 
@@ -121,11 +121,11 @@ button{
 
 <!-- AC -->
 <div class="section">
-<h3>🌊 AC Calculations</h3>
+<h3>🌊 AC Power</h3>
 
-<input id="acV" placeholder="Voltage">
-<input id="acI" placeholder="Current">
-<input id="pf" placeholder="Power Factor">
+<input id="acV" placeholder="Voltage (V)">
+<input id="acI" placeholder="Current (A)">
+<input id="pf" placeholder="Power Factor (0-1)">
 
 <button onclick="ac()">Calculate Power</button>
 <div class="box" id="acRes"></div>
@@ -135,8 +135,8 @@ button{
 <div class="section">
 <h3>⚡ 3-Phase Power</h3>
 
-<input id="tpV" placeholder="Voltage">
-<input id="tpI" placeholder="Current">
+<input id="tpV" placeholder="Voltage (V)">
+<input id="tpI" placeholder="Current (A)">
 <input id="tppf" placeholder="Power Factor">
 
 <button onclick="three()">Calculate</button>
@@ -154,19 +154,45 @@ button{
 <div class="box" id="motorRes"></div>
 </div>
 
+<!-- SMART HELPER -->
+<div class="section">
+<h3>🧠 Smart EE Solver</h3>
+
+<label>Category:</label>
+<select id="category" onchange="updateOptions()">
+  <option value="basic">Basic</option>
+  <option value="power">Power</option>
+  <option value="eff">Efficiency</option>
+  <option value="ac">AC</option>
+  <option value="tr">Transformer</option>
+</select>
+
+<label>Given:</label>
+<select id="given"></select>
+
+<label>Find:</label>
+<select id="find"></select>
+
+<input id="sv1" placeholder="Value 1">
+<input id="sv2" placeholder="Value 2">
+<input id="pfSmart" placeholder="Power Factor (only for AC)">
+
+<button onclick="smartSolve()">Solve Smart</button>
+
+<div class="box" id="smartRes"></div>
+</div>
+
 <script>
 
+// BASIC
 function calcBasic(){
 let m=basicMode.value;
 let a=parseFloat(b1.value);
 let b=parseFloat(b2.value);
 
-if(isNaN(a)||isNaN(b)){
-basicRes.innerText="Enter values";
-return;
-}
+if(isNaN(a)||isNaN(b)){basicRes.innerText="Enter values";return;}
 
-let r,f;
+let r,f,unit;
 
 if(m==="I"){r=a/b;f="I=V/R";unit="A";}
 if(m==="V"){r=a*b;f="V=IR";unit="V";}
@@ -178,6 +204,7 @@ if(m==="P2"){r=(a*a)/b;f="P=V²/R";unit="W";}
 basicRes.innerText=`Result: ${r.toFixed(2)} ${unit}\nFormula: ${f}`;
 }
 
+// ENERGY
 function energy(){
 let p=parseFloat(power.value);
 let t=parseFloat(time.value);
@@ -189,6 +216,7 @@ let e=p*t;
 energyRes.innerText=`Energy = ${e.toFixed(2)} Wh\n= ${(e/1000).toFixed(2)} kWh`;
 }
 
+// RESISTANCE
 function resCalc(){
 let m=resMode.value;
 let a=parseFloat(r1.value);
@@ -196,14 +224,12 @@ let b=parseFloat(r2.value);
 
 if(isNaN(a)||isNaN(b)){resOut.innerText="Enter values";return;}
 
-let r;
-
-if(m==="series") r=a+b;
-if(m==="parallel") r=(a*b)/(a+b);
+let r = (m==="series") ? a+b : (a*b)/(a+b);
 
 resOut.innerText=`R = ${r.toFixed(2)} Ω`;
 }
 
+// EFFICIENCY
 function eff(){
 let o=parseFloat(out.value);
 let i=parseFloat(inp.value);
@@ -215,6 +241,7 @@ let e=(o/i)*100;
 effRes.innerText=`Efficiency = ${e.toFixed(2)} %`;
 }
 
+// TRANSFORMER
 function tr(){
 let a=parseFloat(v1.value);
 let b=parseFloat(v2.value);
@@ -226,6 +253,7 @@ let r=a/b;
 trRes.innerText=`Ratio = ${r.toFixed(2)}\nV1/V2`;
 }
 
+// AC
 function ac(){
 let v=parseFloat(acV.value);
 let i=parseFloat(acI.value);
@@ -238,6 +266,7 @@ let p=v*i*pfv;
 acRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: VIcosθ`;
 }
 
+// THREE PHASE
 function three(){
 let v=parseFloat(tpV.value);
 let i=parseFloat(tpI.value);
@@ -250,6 +279,7 @@ let p=1.732*v*i*pfv;
 tpRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: √3VIcosθ`;
 }
 
+// MOTOR
 function motor(){
 let t=parseFloat(torque.value);
 let n=parseFloat(speed.value);
@@ -261,31 +291,79 @@ let p=(2*Math.PI*n*t)/60;
 motorRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: 2πNT/60`;
 }
 
+// SMART HELPER
+function updateOptions(){
+let c=category.value;
+
+if(c==="basic"){
+given.innerHTML=`<option value="VI">V & I</option><option value="VR">V & R</option><option value="IR">I & R</option>`;
+find.innerHTML=`<option value="P">Power</option><option value="I">Current</option><option value="V">Voltage</option><option value="R">Resistance</option>`;
+}
+
+if(c==="power"){
+given.innerHTML=`<option value="VI">V & I</option><option value="IR">I & R</option><option value="VR">V & R</option>`;
+find.innerHTML=`<option value="P">Power</option>`;
+}
+
+if(c==="eff"){
+given.innerHTML=`<option value="eff">Output & Input</option>`;
+find.innerHTML=`<option value="eff">Efficiency</option>`;
+}
+
+if(c==="ac"){
+given.innerHTML=`<option value="ac">V & I</option>`;
+find.innerHTML=`<option value="P">Power</option>`;
+}
+
+if(c==="tr"){
+given.innerHTML=`<option value="tr">V1 & V2</option>`;
+find.innerHTML=`<option value="ratio">Ratio</option>`;
+}
+}
+
+updateOptions();
+
+function smartSolve(){
+let c=category.value;
+let g=given.value;
+
+let a=parseFloat(sv1.value);
+let b=parseFloat(sv2.value);
+let pfv=parseFloat(pfSmart.value);
+
+let r,f,s,u;
+
+if(isNaN(a)||isNaN(b)){smartRes.innerText="Enter values";return;}
+
+if(c==="basic"){
+if(g==="VI"){r=a*b;f="P=VI";u="W";s=`${a}×${b}`;}
+if(g==="VR"){r=a/b;f="I=V/R";u="A";s=`${a}/${b}`;}
+if(g==="IR"){r=a*b;f="V=IR";u="V";s=`${a}×${b}`;}
+}
+
+if(c==="power"){
+if(g==="VI"){r=a*b;f="P=VI";u="W";s=`${a}×${b}`;}
+if(g==="IR"){r=a*a*b;f="P=I²R";u="W";s=`${a}²×${b}`;}
+if(g==="VR"){r=(a*a)/b;f="P=V²/R";u="W";s=`${a}²/${b}`;}
+}
+
+if(c==="eff"){
+r=(a/b)*100;f="η=(Output/Input)×100";u="%";s=`(${a}/${b})×100`;
+}
+
+if(c==="ac"){
+if(isNaN(pfv)){smartRes.innerText="Enter PF";return;}
+r=a*b*pfv;f="P=VIcosθ";u="W";s=`${a}×${b}×${pfv}`;
+}
+
+if(c==="tr"){
+r=a/b;f="V1/V2";u="";s=`${a}/${b}`;
+}
+
+smartRes.innerText=`Result: ${r.toFixed(2)} ${u}\nFormula: ${f}\nStep: ${s}=${r.toFixed(2)}`;
+}
+
 </script>
-<div class="section">
-<h3>🧠 Smart Formula Helper</h3>
 
-<label>Given:</label>
-<select id="given">
-  <option value="VI">Voltage & Current</option>
-  <option value="VR">Voltage & Resistance</option>
-  <option value="IR">Current & Resistance</option>
-</select>
-
-<label>Find:</label>
-<select id="find">
-  <option value="P">Power</option>
-  <option value="I">Current</option>
-  <option value="V">Voltage</option>
-  <option value="R">Resistance</option>
-</select>
-
-<input id="sv1" placeholder="Value 1">
-<input id="sv2" placeholder="Value 2">
-
-<button onclick="smartSolve()">Solve Smart</button>
-
-<div class="box" id="smartRes"></div>
-</div>
 </body>
 </html>
