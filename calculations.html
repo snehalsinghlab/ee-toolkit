@@ -1,65 +1,266 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Calculations</title>
+<title>EE Calculations</title>
+
 <style>
-body{font-family:sans-serif;background:#0f172a;color:white;padding:20px}
-input,select,button{width:100%;padding:10px;margin-top:10px}
-.box{margin-top:10px;background:#1e293b;padding:10px}
+body{
+  font-family:sans-serif;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+}
+
+h2{
+  text-align:center;
+}
+
+.section{
+  margin-top:25px;
+  padding:15px;
+  background:#1e293b;
+  border-radius:10px;
+}
+
+input, select, button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+
+button{
+  background:#22c55e;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.box{
+  margin-top:10px;
+  padding:10px;
+  background:#020617;
+  border-radius:8px;
+  white-space:pre-line;
+}
 </style>
+
 </head>
 <body>
 
-<h2>🔢 Electrical Calculations</h2>
+<h2>⚡ Electrical Engineering Calculations</h2>
 
-<select id="mode">
-<option value="I">Current (V/R)</option>
-<option value="V">Voltage (I×R)</option>
-<option value="R">Resistance (V/I)</option>
+<!-- OHM + POWER -->
+<div class="section">
+<h3>🔌 Basic (Ohm + Power)</h3>
 
-<option value="P">Power (V×I)</option>
-<option value="P1">Power (I²R)</option>
-<option value="P2">Power (V²/R)</option>
-
-<option value="E">Energy (Pt)</option>
-<option value="Eff">Efficiency</option>
-
-<option value="RS">Series Resistance</option>
-<option value="RP">Parallel Resistance</option>
-
-<option value="TR">Transformer Ratio</option>
+<select id="basicMode">
+<option value="I">Current (I = V/R)</option>
+<option value="V">Voltage (V = IR)</option>
+<option value="R">Resistance (R = V/I)</option>
+<option value="P">Power (P = VI)</option>
+<option value="P1">Power (P = I²R)</option>
+<option value="P2">Power (P = V²/R)</option>
 </select>
 
-<input id="a" placeholder="Value 1">
-<input id="b" placeholder="Value 2">
+<input id="b1" placeholder="Value 1">
+<input id="b2" placeholder="Value 2">
 
-<button onclick="calc()">Calculate</button>
+<button onclick="calcBasic()">Calculate</button>
+<div class="box" id="basicRes"></div>
+</div>
 
-<div class="box" id="res"></div>
+<!-- ENERGY -->
+<div class="section">
+<h3>⚡ Energy</h3>
+
+<input id="power" placeholder="Power (W)">
+<input id="time" placeholder="Time (hours)">
+
+<button onclick="energy()">Calculate Energy</button>
+<div class="box" id="energyRes"></div>
+</div>
+
+<!-- RESISTANCE -->
+<div class="section">
+<h3>🔗 Resistance</h3>
+
+<select id="resMode">
+<option value="series">Series</option>
+<option value="parallel">Parallel</option>
+</select>
+
+<input id="r1" placeholder="R1">
+<input id="r2" placeholder="R2">
+
+<button onclick="resCalc()">Calculate</button>
+<div class="box" id="resOut"></div>
+</div>
+
+<!-- EFFICIENCY -->
+<div class="section">
+<h3>⚙️ Efficiency</h3>
+
+<input id="out" placeholder="Output Power">
+<input id="inp" placeholder="Input Power">
+
+<button onclick="eff()">Calculate</button>
+<div class="box" id="effRes"></div>
+</div>
+
+<!-- TRANSFORMER -->
+<div class="section">
+<h3>🔁 Transformer</h3>
+
+<input id="v1" placeholder="Primary Voltage">
+<input id="v2" placeholder="Secondary Voltage">
+
+<button onclick="tr()">Calculate Ratio</button>
+<div class="box" id="trRes"></div>
+</div>
+
+<!-- AC -->
+<div class="section">
+<h3>🌊 AC Calculations</h3>
+
+<input id="acV" placeholder="Voltage">
+<input id="acI" placeholder="Current">
+<input id="pf" placeholder="Power Factor">
+
+<button onclick="ac()">Calculate Power</button>
+<div class="box" id="acRes"></div>
+</div>
+
+<!-- THREE PHASE -->
+<div class="section">
+<h3>⚡ 3-Phase Power</h3>
+
+<input id="tpV" placeholder="Voltage">
+<input id="tpI" placeholder="Current">
+<input id="tppf" placeholder="Power Factor">
+
+<button onclick="three()">Calculate</button>
+<div class="box" id="tpRes"></div>
+</div>
+
+<!-- MOTOR -->
+<div class="section">
+<h3>⚙️ Motor Power</h3>
+
+<input id="torque" placeholder="Torque (Nm)">
+<input id="speed" placeholder="Speed (RPM)">
+
+<button onclick="motor()">Calculate</button>
+<div class="box" id="motorRes"></div>
+</div>
 
 <script>
-function calc(){
-let m=mode.value,a=parseFloat(a.value),b=parseFloat(b.value);
-let r,txt="";
 
-if(m==="I"){r=a/b;txt="I=V/R";}
-if(m==="V"){r=a*b;txt="V=IR";}
-if(m==="R"){r=a/b;txt="R=V/I";}
+function calcBasic(){
+let m=basicMode.value;
+let a=parseFloat(b1.value);
+let b=parseFloat(b2.value);
 
-if(m==="P"){r=a*b;txt="P=VI";}
-if(m==="P1"){r=a*a*b;txt="P=I²R";}
-if(m==="P2"){r=(a*a)/b;txt="P=V²/R";}
-
-if(m==="E"){r=a*b;txt="E=Pt";}
-if(m==="Eff"){r=(a/b)*100;txt="Efficiency=(Output/Input)×100";}
-
-if(m==="RS"){r=a+b;txt="R=R1+R2";}
-if(m==="RP"){r=(a*b)/(a+b);txt="R=(R1R2)/(R1+R2)";}
-
-if(m==="TR"){r=a/b;txt="V1/V2=N1/N2";}
-
-res.innerText="Result: "+r.toFixed(2)+"\n"+txt;
+if(isNaN(a)||isNaN(b)){
+basicRes.innerText="Enter values";
+return;
 }
+
+let r,f;
+
+if(m==="I"){r=a/b;f="I=V/R";unit="A";}
+if(m==="V"){r=a*b;f="V=IR";unit="V";}
+if(m==="R"){r=a/b;f="R=V/I";unit="Ω";}
+if(m==="P"){r=a*b;f="P=VI";unit="W";}
+if(m==="P1"){r=a*a*b;f="P=I²R";unit="W";}
+if(m==="P2"){r=(a*a)/b;f="P=V²/R";unit="W";}
+
+basicRes.innerText=`Result: ${r.toFixed(2)} ${unit}\nFormula: ${f}`;
+}
+
+function energy(){
+let p=parseFloat(power.value);
+let t=parseFloat(time.value);
+
+if(isNaN(p)||isNaN(t)){energyRes.innerText="Enter values";return;}
+
+let e=p*t;
+
+energyRes.innerText=`Energy = ${e.toFixed(2)} Wh\n= ${(e/1000).toFixed(2)} kWh`;
+}
+
+function resCalc(){
+let m=resMode.value;
+let a=parseFloat(r1.value);
+let b=parseFloat(r2.value);
+
+if(isNaN(a)||isNaN(b)){resOut.innerText="Enter values";return;}
+
+let r;
+
+if(m==="series") r=a+b;
+if(m==="parallel") r=(a*b)/(a+b);
+
+resOut.innerText=`R = ${r.toFixed(2)} Ω`;
+}
+
+function eff(){
+let o=parseFloat(out.value);
+let i=parseFloat(inp.value);
+
+if(isNaN(o)||isNaN(i)){effRes.innerText="Enter values";return;}
+
+let e=(o/i)*100;
+
+effRes.innerText=`Efficiency = ${e.toFixed(2)} %`;
+}
+
+function tr(){
+let a=parseFloat(v1.value);
+let b=parseFloat(v2.value);
+
+if(isNaN(a)||isNaN(b)){trRes.innerText="Enter values";return;}
+
+let r=a/b;
+
+trRes.innerText=`Ratio = ${r.toFixed(2)}\nV1/V2`;
+}
+
+function ac(){
+let v=parseFloat(acV.value);
+let i=parseFloat(acI.value);
+let pfv=parseFloat(pf.value);
+
+if(isNaN(v)||isNaN(i)||isNaN(pfv)){acRes.innerText="Enter values";return;}
+
+let p=v*i*pfv;
+
+acRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: VIcosθ`;
+}
+
+function three(){
+let v=parseFloat(tpV.value);
+let i=parseFloat(tpI.value);
+let pfv=parseFloat(tppf.value);
+
+if(isNaN(v)||isNaN(i)||isNaN(pfv)){tpRes.innerText="Enter values";return;}
+
+let p=1.732*v*i*pfv;
+
+tpRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: √3VIcosθ`;
+}
+
+function motor(){
+let t=parseFloat(torque.value);
+let n=parseFloat(speed.value);
+
+if(isNaN(t)||isNaN(n)){motorRes.innerText="Enter values";return;}
+
+let p=(2*Math.PI*n*t)/60;
+
+motorRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: 2πNT/60`;
+}
+
 </script>
 
 </body>
