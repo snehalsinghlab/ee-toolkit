@@ -262,6 +262,30 @@ motorRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: 2πNT/60`;
 }
 
 </script>
+<div class="section">
+<h3>🧠 Smart Formula Helper</h3>
 
+<label>Given:</label>
+<select id="given">
+  <option value="VI">Voltage & Current</option>
+  <option value="VR">Voltage & Resistance</option>
+  <option value="IR">Current & Resistance</option>
+</select>
+
+<label>Find:</label>
+<select id="find">
+  <option value="P">Power</option>
+  <option value="I">Current</option>
+  <option value="V">Voltage</option>
+  <option value="R">Resistance</option>
+</select>
+
+<input id="sv1" placeholder="Value 1">
+<input id="sv2" placeholder="Value 2">
+
+<button onclick="smartSolve()">Solve Smart</button>
+
+<div class="box" id="smartRes"></div>
+</div>
 </body>
 </html>
