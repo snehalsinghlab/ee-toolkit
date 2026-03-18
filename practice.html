@@ -1,37 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Practice</title>
+<title>Practice - EE Toolkit</title>
+
 <style>
-body{font-family:sans-serif;background:#0f172a;color:white;padding:20px}
-.box{margin-top:10px;background:#1e293b;padding:10px}
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  background:#0f172a;
+  color:white;
+}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 25px;
+  background:rgba(255,255,255,0.05);
+}
+
+.nav-links a{
+  margin-left:15px;
+  color:white;
+  text-decoration:none;
+}
+
+.container{
+  padding:20px;
+  text-align:center;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  margin-top:20px;
+}
+
+input{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  width:200px;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+.result{
+  margin-top:15px;
+  padding:10px;
+  background:#020617;
+  border-radius:8px;
+}
 </style>
+
 </head>
+
 <body>
 
-<h2>📚 Practice</h2>
+<div class="navbar">
+  <div>⚡ EE Toolkit</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="calculations.html">Calculations</a>
+    <a href="practice.html">Practice</a>
+    <a href="challenge.html">Challenge</a>
+    <a href="tools.html">Tools</a>
+  </div>
+</div>
 
-<button onclick="gen()">New Question</button>
-<button onclick="show()">Show Answer</button>
+<div class="container">
 
-<div class="box" id="q"></div>
-<div class="box" id="ans"></div>
+<h2>📚 Practice Mode</h2>
+
+<div class="card">
+  <h3 id="question">Click Start</h3>
+
+  <input id="answer" placeholder="Enter answer">
+
+  <br>
+  <button onclick="check()">Submit</button>
+  <button onclick="nextQ()">Next Question</button>
+
+  <div class="result" id="feedback"></div>
+</div>
+
+<div class="card">
+  <h3>🏆 Stats</h3>
+  <p>Score: <span id="score">0</span></p>
+  <p>Streak: <span id="streak">0</span></p>
+</div>
+
+</div>
 
 <script>
-let data={};
 
-function gen(){
+let score=0;
+let streak=0;
+let currentAnswer=0;
+
+function nextQ(){
+
+let type=Math.floor(Math.random()*4);
+
+let q,a;
+
+if(type===0){
 let V=Math.floor(Math.random()*100)+10;
 let R=Math.floor(Math.random()*10)+1;
-data={V,R,I:V/R};
-
-q.innerText=`Find I if V=${V}, R=${R}`;
-ans.innerText="";
+a=V/R;
+q=`Find Current: V=${V}V, R=${R}Ω`;
 }
 
-function show(){
-ans.innerText=`I=${data.I.toFixed(2)} A\nFormula: V/R`;
+if(type===1){
+let I=Math.floor(Math.random()*10)+1;
+let R=Math.floor(Math.random()*10)+1;
+a=I*R;
+q=`Find Voltage: I=${I}A, R=${R}Ω`;
 }
+
+if(type===2){
+let V=Math.floor(Math.random()*100)+10;
+let I=Math.floor(Math.random()*10)+1;
+a=V*I;
+q=`Find Power: V=${V}V, I=${I}A`;
+}
+
+if(type===3){
+let P=Math.floor(Math.random()*500)+50;
+let t=Math.floor(Math.random()*5)+1;
+a=P*t;
+q=`Find Energy: P=${P}W, t=${t}hr`;
+}
+
+currentAnswer=a.toFixed(2);
+
+question.innerText=q;
+feedback.innerText="";
+answer.value="";
+}
+
+function check(){
+let user=parseFloat(answer.value);
+
+if(isNaN(user)){
+feedback.innerText="Enter valid number";
+return;
+}
+
+if(Math.abs(user-currentAnswer)<0.1){
+score++;
+streak++;
+feedback.innerText="✅ Correct!";
+}
+else{
+streak=0;
+feedback.innerText=`❌ Wrong! Correct: ${currentAnswer}`;
+}
+
+document.getElementById("score").innerText=score;
+document.getElementById("streak").innerText=streak;
+}
+
 </script>
 
 </body>
