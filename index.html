@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>EE Toolkit Game</title>
+  <title>EE Toolkit | Smart Calculators</title>
 
   <style>
     body {
@@ -51,17 +51,10 @@
       white-space: pre-line;
     }
 
-    .stats {
+    .steps {
       margin-top: 10px;
       font-size: 14px;
       color: #a5b4fc;
-    }
-
-    .box {
-      margin-top: 20px;
-      padding: 10px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.05);
     }
   </style>
 </head>
@@ -69,18 +62,13 @@
 <body>
 
 <header>
-  <h1>⚡ EE Toolkit Game</h1>
+  <h1>⚡ EE Toolkit</h1>
+  <p>All-in-one Electrical Calculator</p>
 </header>
 
 <div class="container">
 
-  <div class="stats">
-    Score: <span id="score">0</span> |
-    Streak: <span id="streak">0</span> |
-    Level: <span id="level">Beginner</span>
-  </div>
-
-  <select id="mode">
+  <select id="mode" onchange="updateUI()">
     <option value="I">Current (V/R)</option>
     <option value="V">Voltage (I×R)</option>
     <option value="R">Resistance (V/I)</option>
@@ -96,158 +84,105 @@
     <option value="RS">Series Resistance</option>
     <option value="RP">Parallel Resistance</option>
 
-    <option value="U">Convert W → kW</option>
+    <option value="Bill">Electricity Bill ⚡</option>
+    <option value="Wire">Wire Current Capacity 🔌</option>
+    <option value="Trans">Transformer 🔄</option>
+    <option value="Unit">Unit Converter 🔁</option>
   </select>
 
   <input id="value1" type="number" placeholder="Value 1">
   <input id="value2" type="number" placeholder="Value 2">
 
   <button onclick="calculate()">Calculate</button>
+  <button onclick="toggleExam()">🎯 Exam Mode</button>
 
   <h3 id="result"></h3>
-
-  <div class="box">
-    <h3>🎯 Challenge</h3>
-    <button onclick="generateChallenge()">New Challenge</button>
-    <p id="question"></p>
-    <input id="answer" placeholder="Your answer">
-    <button onclick="checkAnswer()">Submit</button>
-  </div>
-
-  <div class="box">
-    <h3>🏆 Leaderboard</h3>
-    <button onclick="saveScore()">Save Score</button>
-    <div id="leaderboard"></div>
-  </div>
+  <div class="steps" id="steps"></div>
 
 </div>
 
 <script>
-let score = 0;
-let streak = 0;
-let correctAnswer = 0;
+let examMode = false;
 
-// LOAD
-if(localStorage.getItem("score")){
-  score = parseInt(localStorage.getItem("score"));
-  streak = parseInt(localStorage.getItem("streak"));
+function toggleExam(){
+  examMode = !examMode;
+  alert(examMode ? "Exam Mode ON" : "Exam Mode OFF");
 }
 
-function saveProgress(){
-  localStorage.setItem("score", score);
-  localStorage.setItem("streak", streak);
-}
-
-function updateStats(){
-  scoreEl.innerText = score;
-  streakEl.innerText = streak;
-
-  let level = "Beginner";
-  if(score > 50) level = "Learner";
-  if(score > 150) level = "Pro";
-
-  levelEl.innerText = level;
-
-  saveProgress();
-}
-
-// CALCULATOR (FULL + UNITS)
 function calculate(){
   let m = mode.value;
   let v1 = parseFloat(value1.value);
   let v2 = parseFloat(value2.value);
 
-  if(m !== "U" && (isNaN(v1) || isNaN(v2))){
+  if(isNaN(v1)){
     result.innerText = "Enter values";
     return;
   }
 
-  let r, unit="";
+  let r, unit="", formula="", steps="";
 
-  if(m==="I"){ r=v1/v2; unit="A"; }
-  else if(m==="V"){ r=v1*v2; unit="V"; }
-  else if(m==="R"){ r=v1/v2; unit="Ω"; }
+  if(m==="I"){ r=v1/v2; unit="A"; formula="I=V/R"; steps=`${v1}/${v2}`; }
+  else if(m==="V"){ r=v1*v2; unit="V"; formula="V=I×R"; steps=`${v1}×${v2}`; }
+  else if(m==="R"){ r=v1/v2; unit="Ω"; formula="R=V/I"; steps=`${v1}/${v2}`; }
 
-  else if(m==="P"){ r=v1*v2; unit="W"; }
-  else if(m==="P1"){ r=v1*v1*v2; unit="W"; }
-  else if(m==="P2"){ r=(v1*v1)/v2; unit="W"; }
+  else if(m==="P"){ r=v1*v2; unit="W"; formula="P=VI"; steps=`${v1}×${v2}`; }
+  else if(m==="P1"){ r=v1*v1*v2; unit="W"; formula="P=I²R"; steps=`${v1}²×${v2}`; }
+  else if(m==="P2"){ r=(v1*v1)/v2; unit="W"; formula="P=V²/R"; steps=`${v1}²/${v2}`; }
 
-  else if(m==="E"){ r=v1*v2; unit="J"; }
-  else if(m==="Ek"){ r=(v1*v2)/1000; unit="kWh"; }
-  else if(m==="Q"){ r=v1*v2; unit="C"; }
+  else if(m==="E"){ r=v1*v2; unit="J"; formula="E=Pt"; steps=`${v1}×${v2}`; }
+  else if(m==="Ek"){ r=(v1*v2)/1000; unit="kWh"; formula="E=(Pt)/1000"; steps=`(${v1}×${v2})/1000`; }
+  else if(m==="Q"){ r=v1*v2; unit="C"; formula="Q=It"; steps=`${v1}×${v2}`; }
 
-  else if(m==="RS"){ r=v1+v2; unit="Ω"; }
-  else if(m==="RP"){ r=(v1*v2)/(v1+v2); unit="Ω"; }
+  else if(m==="RS"){ r=v1+v2; unit="Ω"; formula="R=R1+R2"; steps=`${v1}+${v2}`; }
+  else if(m==="RP"){ r=(v1*v2)/(v1+v2); unit="Ω"; formula="R=(R1R2)/(R1+R2)"; steps=`(${v1}×${v2})/(${v1}+${v2})`; }
 
-  else if(m==="U"){ r=v1/1000; unit="kW"; }
+  else if(m==="Bill"){ r=v1*v2; unit="₹"; formula="Bill=Units×Cost"; steps=`${v1}×${v2}`; }
+
+  else if(m==="Wire"){ r=v1*5; unit="A"; formula="Approx: 1mm² ≈ 5A"; steps=`${v1}×5`; }
+
+  else if(m==="Trans"){ r=v1/v2; unit="ratio"; formula="V1/V2=N1/N2"; steps=`${v1}/${v2}`; }
+
+  else if(m==="Unit"){
+    r = v1/1000;
+    unit="k (converted)";
+    formula="Divide by 1000";
+    steps=`${v1}/1000`;
+  }
 
   r = Math.round(r*100)/100;
 
-  result.innerText = "Result = " + r + " " + unit;
-
-  score += 10;
-  streak += 1;
-
-  updateStats();
-}
-
-// CHALLENGE
-function generateChallenge(){
-  let v = Math.floor(Math.random()*20)+1;
-  let r = Math.floor(Math.random()*10)+1;
-
-  correctAnswer = v/r;
-
-  question.innerText = "Find Current: V="+v+"V, R="+r+"Ω";
-}
-
-function checkAnswer(){
-  let user = parseFloat(answer.value);
-
-  if(Math.abs(user - correctAnswer) < 0.1){
-    alert("Correct!");
-    score += 20;
-    streak += 1;
+  if(examMode){
+    result.innerText="Think first, click again";
+    examMode=false;
   } else {
-    alert("Wrong!");
-    streak = 0;
+    result.innerText="Result = "+r+" "+unit;
+    stepsEl.innerText="Formula: "+formula+"\nStep: "+steps;
   }
-
-  updateStats();
 }
 
-// LEADERBOARD
-function saveScore(){
-  let name = prompt("Enter your name:");
-  if(!name) return;
+function updateUI(){
+  let m = mode.value;
 
-  let data = JSON.parse(localStorage.getItem("leaderboard")) || [];
-
-  data.push({name, score});
-  data.sort((a,b)=>b.score-a.score);
-
-  localStorage.setItem("leaderboard", JSON.stringify(data));
-  showLeaderboard();
+  if(m==="Bill"){
+    value1.placeholder="Units";
+    value2.placeholder="Cost/unit";
+  }
+  else if(m==="Wire"){
+    value1.placeholder="Wire size (mm²)";
+    value2.style.display="none";
+  }
+  else if(m==="Unit"){
+    value1.placeholder="Enter value";
+    value2.style.display="none";
+  }
+  else{
+    value1.placeholder="Value 1";
+    value2.placeholder="Value 2";
+    value2.style.display="block";
+  }
 }
 
-function showLeaderboard(){
-  let data = JSON.parse(localStorage.getItem("leaderboard")) || [];
-
-  let html = "";
-  data.slice(0,5).forEach((p,i)=>{
-    html += "<p>"+(i+1)+". "+p.name+" - "+p.score+"</p>";
-  });
-
-  leaderboard.innerHTML = html;
-}
-
-let scoreEl = document.getElementById("score");
-let streakEl = document.getElementById("streak");
-let levelEl = document.getElementById("level");
-let leaderboard = document.getElementById("leaderboard");
-
-updateStats();
-showLeaderboard();
+let stepsEl=document.getElementById("steps");
 </script>
 
 </body>
