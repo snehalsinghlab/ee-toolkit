@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Challenge</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;padding:20px}
+</style>
+</head>
+<body>
+
+<h2>🎯 Challenge</h2>
+
+<button onclick="start()">Start</button>
+
+<div id="q"></div>
+<input id="u">
+<button onclick="check()">Submit</button>
+
+<div id="s"></div>
+
+<script>
+let score=0,qc=0,data={};
+
+function start(){score=0;qc=0;next();}
+
+function next(){
+if(qc>=5){q.innerText="Done";return;}
+let V=20+Math.random()*50;
+let R=1+Math.random()*10;
+data={I:V/R};
+q.innerText=`Find I: V=${V.toFixed(0)},R=${R.toFixed(0)}`;
+}
+
+function check(){
+let uAns=parseFloat(u.value);
+if(Math.abs(uAns-data.I)<1)score++;
+qc++;next();
+s.innerText="Score: "+score;
+}
+</script>
+
+</body>
+</html>
