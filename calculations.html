@@ -5,9 +5,32 @@
 
 <style>
 body{
-  font-family:sans-serif;
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
   background:#0f172a;
   color:white;
+}
+
+/* NAVBAR */
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 25px;
+  background:rgba(255,255,255,0.05);
+}
+
+.logo{
+  font-weight:bold;
+}
+
+.nav-links a{
+  margin-left:15px;
+  color:white;
+  text-decoration:none;
+}
+
+/* CONTENT */
+.container{
   padding:20px;
 }
 
@@ -46,7 +69,22 @@ button{
 </style>
 
 </head>
+
 <body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">⚡ EE Toolkit</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="calculations.html">Calculations</a>
+    <a href="practice.html">Practice</a>
+    <a href="challenge.html">Challenge</a>
+    <a href="tools.html">Tools</a>
+  </div>
+</div>
+
+<div class="container">
 
 <h2>⚡ Electrical Engineering Calculations</h2>
 
@@ -125,7 +163,7 @@ button{
 
 <input id="acV" placeholder="Voltage (V)">
 <input id="acI" placeholder="Current (A)">
-<input id="pf" placeholder="Power Factor (0-1)">
+<input id="pf" placeholder="Power Factor">
 
 <button onclick="ac()">Calculate Power</button>
 <div class="box" id="acRes"></div>
@@ -158,7 +196,6 @@ button{
 <div class="section">
 <h3>🧠 Smart EE Solver</h3>
 
-<label>Category:</label>
 <select id="category" onchange="updateOptions()">
   <option value="basic">Basic</option>
   <option value="power">Power</option>
@@ -167,10 +204,8 @@ button{
   <option value="tr">Transformer</option>
 </select>
 
-<label>Given:</label>
 <select id="given"></select>
 
-<label>Find:</label>
 <select id="find"></select>
 
 <input id="sv1" placeholder="Value 1">
@@ -180,6 +215,8 @@ button{
 <button onclick="smartSolve()">Solve Smart</button>
 
 <div class="box" id="smartRes"></div>
+</div>
+
 </div>
 
 <script>
@@ -192,16 +229,16 @@ let b=parseFloat(b2.value);
 
 if(isNaN(a)||isNaN(b)){basicRes.innerText="Enter values";return;}
 
-let r,f,unit;
+let r,f,u;
 
-if(m==="I"){r=a/b;f="I=V/R";unit="A";}
-if(m==="V"){r=a*b;f="V=IR";unit="V";}
-if(m==="R"){r=a/b;f="R=V/I";unit="Ω";}
-if(m==="P"){r=a*b;f="P=VI";unit="W";}
-if(m==="P1"){r=a*a*b;f="P=I²R";unit="W";}
-if(m==="P2"){r=(a*a)/b;f="P=V²/R";unit="W";}
+if(m==="I"){r=a/b;f="I=V/R";u="A";}
+if(m==="V"){r=a*b;f="V=IR";u="V";}
+if(m==="R"){r=a/b;f="R=V/I";u="Ω";}
+if(m==="P"){r=a*b;f="P=VI";u="W";}
+if(m==="P1"){r=a*a*b;f="P=I²R";u="W";}
+if(m==="P2"){r=(a*a)/b;f="P=V²/R";u="W";}
 
-basicRes.innerText=`Result: ${r.toFixed(2)} ${unit}\nFormula: ${f}`;
+basicRes.innerText=`Result: ${r.toFixed(2)} ${u}\nFormula: ${f}`;
 }
 
 // ENERGY
@@ -224,7 +261,7 @@ let b=parseFloat(r2.value);
 
 if(isNaN(a)||isNaN(b)){resOut.innerText="Enter values";return;}
 
-let r = (m==="series") ? a+b : (a*b)/(a+b);
+let r=(m==="series")?a+b:(a*b)/(a+b);
 
 resOut.innerText=`R = ${r.toFixed(2)} Ω`;
 }
@@ -250,7 +287,7 @@ if(isNaN(a)||isNaN(b)){trRes.innerText="Enter values";return;}
 
 let r=a/b;
 
-trRes.innerText=`Ratio = ${r.toFixed(2)}\nV1/V2`;
+trRes.innerText=`Ratio = ${r.toFixed(2)} (V1/V2)`;
 }
 
 // AC
@@ -266,7 +303,7 @@ let p=v*i*pfv;
 acRes.innerText=`Power = ${p.toFixed(2)} W\nFormula: VIcosθ`;
 }
 
-// THREE PHASE
+// 3 PHASE
 function three(){
 let v=parseFloat(tpV.value);
 let i=parseFloat(tpI.value);
@@ -297,7 +334,7 @@ let c=category.value;
 
 if(c==="basic"){
 given.innerHTML=`<option value="VI">V & I</option><option value="VR">V & R</option><option value="IR">I & R</option>`;
-find.innerHTML=`<option value="P">Power</option><option value="I">Current</option><option value="V">Voltage</option><option value="R">Resistance</option>`;
+find.innerHTML=`<option value="P">Power</option>`;
 }
 
 if(c==="power"){
@@ -331,7 +368,7 @@ let a=parseFloat(sv1.value);
 let b=parseFloat(sv2.value);
 let pfv=parseFloat(pfSmart.value);
 
-let r,f,s,u;
+let r,f,u,s;
 
 if(isNaN(a)||isNaN(b)){smartRes.innerText="Enter values";return;}
 
