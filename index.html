@@ -37,12 +37,7 @@
       border: none;
     }
 
-    input {
-      background: white;
-      color: black;
-    }
-
-    select {
+    input, select {
       background: white;
       color: black;
     }
@@ -130,7 +125,6 @@
   <input type="number" id="value2">
 
   <button onclick="calculate()">Calculate</button>
-
   <button onclick="copyResult()">Copy Result</button>
 
   <h3 id="result"></h3>
@@ -163,26 +157,28 @@ function calculate() {
   if (m !== "U" && (isNaN(v1) || isNaN(v2))) return show("Enter values");
   if (m === "U" && isNaN(v1)) return show("Enter value");
 
-  let r, explanation = "";
+  let r, explanation = "", unit = "";
 
-  if (m==="I"){ r=v1/v2; explanation="Using Ohm’s Law: I = V / R"; }
-  else if (m==="V"){ r=v1*v2; explanation="Using Ohm’s Law: V = I × R"; }
-  else if (m==="R"){ r=v1/v2; explanation="Using Ohm’s Law: R = V / I"; }
+  if (m==="I"){ r=v1/v2; explanation="Using Ohm’s Law: I = V / R"; unit="A"; }
+  else if (m==="V"){ r=v1*v2; explanation="Using Ohm’s Law: V = I × R"; unit="V"; }
+  else if (m==="R"){ r=v1/v2; explanation="Using Ohm’s Law: R = V / I"; unit="Ω"; }
 
-  else if (m==="P"){ r=v1*v2; explanation="Power formula: P = V × I"; }
-  else if (m==="P1"){ r=v1*v1*v2; explanation="Power formula: P = I²R"; }
-  else if (m==="P2"){ r=(v1*v1)/v2; explanation="Power formula: P = V² / R"; }
+  else if (m==="P"){ r=v1*v2; explanation="Power formula: P = V × I"; unit="W"; }
+  else if (m==="P1"){ r=v1*v1*v2; explanation="Power formula: P = I²R"; unit="W"; }
+  else if (m==="P2"){ r=(v1*v1)/v2; explanation="Power formula: P = V² / R"; unit="W"; }
 
-  else if (m==="E"){ r=v1*v2; explanation="Energy = Power × Time"; }
-  else if (m==="Ek"){ r=(v1*v2)/1000; explanation="Energy in kWh"; }
-  else if (m==="Q"){ r=v1*v2; explanation="Charge = Current × Time"; }
+  else if (m==="E"){ r=v1*v2; explanation="Energy = Power × Time"; unit="J"; }
+  else if (m==="Ek"){ r=(v1*v2)/1000; explanation="Energy in kWh"; unit="kWh"; }
+  else if (m==="Q"){ r=v1*v2; explanation="Charge = Current × Time"; unit="C"; }
 
-  else if (m==="RS"){ r=v1+v2; explanation="Series: R = R1 + R2"; }
-  else if (m==="RP"){ r=(v1*v2)/(v1+v2); explanation="Parallel: R = (R1×R2)/(R1+R2)"; }
+  else if (m==="RS"){ r=v1+v2; explanation="Series: R = R1 + R2"; unit="Ω"; }
+  else if (m==="RP"){ r=(v1*v2)/(v1+v2); explanation="Parallel: R = (R1×R2)/(R1+R2)"; unit="Ω"; }
 
-  else if (m==="U"){ r=v1/1000; explanation="Convert W to kW"; }
+  else if (m==="U"){ r=v1/1000; explanation="Convert W to kW"; unit="kW"; }
 
-  let resultText = "Result = " + r;
+  r = Math.round(r * 100) / 100;
+
+  let resultText = "Result = " + r + " " + unit;
   show(resultText + "\n" + explanation);
 
   addToHistory(resultText);
