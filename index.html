@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>EE Toolkit | Smart Calculators</title>
+  <title>EE Survival Toolkit</title>
 
   <style>
     body {
@@ -18,43 +18,41 @@
     }
 
     .container {
-      max-width: 420px;
+      max-width: 450px;
       margin: 20px auto;
       padding: 20px;
       background: rgba(255,255,255,0.05);
       border-radius: 15px;
     }
 
-    input, select {
+    select, input, button {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
       border-radius: 10px;
       border: none;
+    }
+
+    input {
       background: white;
       color: black;
     }
 
     button {
-      margin-top: 10px;
-      padding: 10px;
-      width: 100%;
-      border-radius: 10px;
-      border: none;
       background: #22c55e;
       font-weight: bold;
       cursor: pointer;
     }
 
-    #result {
-      margin-top: 10px;
-      white-space: pre-line;
+    h3 {
+      margin-top: 15px;
     }
 
-    .steps {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #a5b4fc;
+    .box {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -62,127 +60,109 @@
 <body>
 
 <header>
-  <h1>⚡ EE Toolkit</h1>
-  <p>All-in-one Electrical Calculator</p>
+  <h1>⚡ EE Survival Toolkit</h1>
+  <p>Solve numericals faster than ever</p>
 </header>
 
 <div class="container">
 
-  <select id="mode" onchange="updateUI()">
-    <option value="I">Current (V/R)</option>
-    <option value="V">Voltage (I×R)</option>
-    <option value="R">Resistance (V/I)</option>
+  <h3>🔢 Numerical Solver</h3>
+  <input id="v" type="number" placeholder="Voltage (V)">
+  <input id="r" type="number" placeholder="Resistance (Ω)">
+  <button onclick="solve()">Solve</button>
 
-    <option value="P">Power (V×I)</option>
-    <option value="P1">Power (I²R)</option>
-    <option value="P2">Power (V²/R)</option>
+  <div class="box" id="solverResult"></div>
 
-    <option value="E">Energy (J)</option>
-    <option value="Ek">Energy (kWh)</option>
-    <option value="Q">Charge</option>
+  <h3>⚡ What Formula to Use?</h3>
 
-    <option value="RS">Series Resistance</option>
-    <option value="RP">Parallel Resistance</option>
-
-    <option value="Bill">Electricity Bill ⚡</option>
-    <option value="Wire">Wire Current Capacity 🔌</option>
-    <option value="Trans">Transformer 🔄</option>
-    <option value="Unit">Unit Converter 🔁</option>
+  <select id="given">
+    <option value="VR">Given: V & R</option>
+    <option value="VI">Given: V & I</option>
+    <option value="IR">Given: I & R</option>
   </select>
 
-  <input id="value1" type="number" placeholder="Value 1">
-  <input id="value2" type="number" placeholder="Value 2">
+  <select id="find">
+    <option value="I">Find Current (I)</option>
+    <option value="V">Find Voltage (V)</option>
+    <option value="R">Find Resistance (R)</option>
+  </select>
 
-  <button onclick="calculate()">Calculate</button>
-  <button onclick="toggleExam()">🎯 Exam Mode</button>
+  <button onclick="suggest()">Get Formula</button>
 
-  <h3 id="result"></h3>
-  <div class="steps" id="steps"></div>
+  <div class="box" id="formulaResult"></div>
+
+  <h3>📚 Exam Mode</h3>
+  <button onclick="generateQ()">Generate Question</button>
+  <button onclick="showAns()">Show Answer</button>
+
+  <div class="box" id="question"></div>
+  <div class="box" id="answer"></div>
 
 </div>
 
 <script>
-let examMode = false;
 
-function toggleExam(){
-  examMode = !examMode;
-  alert(examMode ? "Exam Mode ON" : "Exam Mode OFF");
-}
+// 🔢 Numerical Solver
+function solve(){
+  let V = parseFloat(document.getElementById("v").value);
+  let R = parseFloat(document.getElementById("r").value);
 
-function calculate(){
-  let m = mode.value;
-  let v1 = parseFloat(value1.value);
-  let v2 = parseFloat(value2.value);
-
-  if(isNaN(v1)){
-    result.innerText = "Enter values";
+  if(isNaN(V) || isNaN(R)){
+    solverResult.innerText = "Enter both values";
     return;
   }
 
-  let r, unit="", formula="", steps="";
+  let I = V / R;
 
-  if(m==="I"){ r=v1/v2; unit="A"; formula="I=V/R"; steps=`${v1}/${v2}`; }
-  else if(m==="V"){ r=v1*v2; unit="V"; formula="V=I×R"; steps=`${v1}×${v2}`; }
-  else if(m==="R"){ r=v1/v2; unit="Ω"; formula="R=V/I"; steps=`${v1}/${v2}`; }
-
-  else if(m==="P"){ r=v1*v2; unit="W"; formula="P=VI"; steps=`${v1}×${v2}`; }
-  else if(m==="P1"){ r=v1*v1*v2; unit="W"; formula="P=I²R"; steps=`${v1}²×${v2}`; }
-  else if(m==="P2"){ r=(v1*v1)/v2; unit="W"; formula="P=V²/R"; steps=`${v1}²/${v2}`; }
-
-  else if(m==="E"){ r=v1*v2; unit="J"; formula="E=Pt"; steps=`${v1}×${v2}`; }
-  else if(m==="Ek"){ r=(v1*v2)/1000; unit="kWh"; formula="E=(Pt)/1000"; steps=`(${v1}×${v2})/1000`; }
-  else if(m==="Q"){ r=v1*v2; unit="C"; formula="Q=It"; steps=`${v1}×${v2}`; }
-
-  else if(m==="RS"){ r=v1+v2; unit="Ω"; formula="R=R1+R2"; steps=`${v1}+${v2}`; }
-  else if(m==="RP"){ r=(v1*v2)/(v1+v2); unit="Ω"; formula="R=(R1R2)/(R1+R2)"; steps=`(${v1}×${v2})/(${v1}+${v2})`; }
-
-  else if(m==="Bill"){ r=v1*v2; unit="₹"; formula="Bill=Units×Cost"; steps=`${v1}×${v2}`; }
-
-  else if(m==="Wire"){ r=v1*5; unit="A"; formula="Approx: 1mm² ≈ 5A"; steps=`${v1}×5`; }
-
-  else if(m==="Trans"){ r=v1/v2; unit="ratio"; formula="V1/V2=N1/N2"; steps=`${v1}/${v2}`; }
-
-  else if(m==="Unit"){
-    r = v1/1000;
-    unit="k (converted)";
-    formula="Divide by 1000";
-    steps=`${v1}/1000`;
-  }
-
-  r = Math.round(r*100)/100;
-
-  if(examMode){
-    result.innerText="Think first, click again";
-    examMode=false;
-  } else {
-    result.innerText="Result = "+r+" "+unit;
-    stepsEl.innerText="Formula: "+formula+"\nStep: "+steps;
-  }
+  solverResult.innerText =
+    "Current = " + I.toFixed(2) + " A\n" +
+    "Formula: I = V / R\n" +
+    "Step: " + V + " / " + R + " = " + I.toFixed(2);
 }
 
-function updateUI(){
-  let m = mode.value;
 
-  if(m==="Bill"){
-    value1.placeholder="Units";
-    value2.placeholder="Cost/unit";
-  }
-  else if(m==="Wire"){
-    value1.placeholder="Wire size (mm²)";
-    value2.style.display="none";
-  }
-  else if(m==="Unit"){
-    value1.placeholder="Enter value";
-    value2.style.display="none";
-  }
-  else{
-    value1.placeholder="Value 1";
-    value2.placeholder="Value 2";
-    value2.style.display="block";
-  }
+// ⚡ What to Use Helper
+function suggest(){
+  let g = given.value;
+  let f = find.value;
+
+  let text = "";
+
+  if(g==="VR" && f==="I") text = "Use I = V / R";
+  else if(g==="VI" && f==="R") text = "Use R = V / I";
+  else if(g==="IR" && f==="V") text = "Use V = I × R";
+  else text = "Invalid combination";
+
+  formulaResult.innerText = text;
 }
 
-let stepsEl=document.getElementById("steps");
+
+// 📚 Exam Mode
+let currentQ = {};
+function generateQ(){
+  let V = Math.floor(Math.random()*100)+10;
+  let R = Math.floor(Math.random()*10)+1;
+
+  currentQ.V = V;
+  currentQ.R = R;
+  currentQ.I = V / R;
+
+  question.innerText = "Find Current if V=" + V + "V and R=" + R + "Ω";
+  answer.innerText = "";
+}
+
+function showAns(){
+  if(!currentQ.I){
+    answer.innerText = "Generate question first";
+    return;
+  }
+
+  answer.innerText =
+    "I = " + currentQ.I.toFixed(2) + " A\n" +
+    "Formula: I = V / R\n" +
+    "Step: " + currentQ.V + "/" + currentQ.R;
+}
+
 </script>
 
 </body>
