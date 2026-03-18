@@ -5,63 +5,79 @@
 
   <style>
     body {
-      font-family: Arial;
-      background: #0f172a;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #020617);
       color: white;
       margin: 0;
     }
 
     header {
       text-align: center;
-      padding: 20px;
-      background: #020617;
+      padding: 25px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .container {
-      max-width: 480px;
-      margin: 20px auto;
+      max-width: 500px;
+      margin: 30px auto;
       padding: 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-    }
-
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-    }
-
-    input {
-      background: white;
-      color: black;
-    }
-
-    button {
-      background: #22c55e;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .box {
-      margin-top: 10px;
-      padding: 12px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 10px;
-      white-space: pre-line;
     }
 
     .section-title {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 18px;
-      color: #a5b4fc;
+      color: #c7d2fe;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 12px;
+      width: 100%;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 10px rgba(34,197,94,0.5);
+    }
+
+    .box {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      white-space: pre-line;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .stats {
       margin-top: 10px;
       font-size: 14px;
       color: #a5b4fc;
+      text-align: center;
     }
   </style>
 </head>
@@ -110,7 +126,7 @@
   <div class="section-title">🎯 Challenge Mode</div>
   <button onclick="startChallenge()">Start Challenge</button>
   <div class="box" id="challengeQ"></div>
-  <input id="userAns" type="number" placeholder="Your Answer">
+  <input id="userAns" type="number" placeholder="Your Answer (A)">
   <button onclick="submitAns()">Submit</button>
   <div class="stats" id="stats"></div>
 
@@ -126,14 +142,14 @@
 ❌ kW ≠ kWh  
 ✔ kW = Power, kWh = Energy  
 
-❌ Using wrong formula  
-✔ Always check GIVEN values first  
+❌ Wrong formula usage  
+✔ Check GIVEN values first  
 
 ❌ Series vs Parallel confusion  
 ✔ Series → Add, Parallel → Reciprocal  
 
 ❌ Ignoring units  
-✔ Always write units in answers  
+✔ Always include units  
   </div>
 
 </div>
@@ -142,78 +158,101 @@
 
 // SOLVER
 function solve(){
-  let V=v.value, R=r.value;
-  if(!V||!R){ solverResult.innerText="Enter values"; return; }
+  let V = parseFloat(v.value);
+  let R = parseFloat(r.value);
 
-  let I=V/R;
+  if(isNaN(V) || isNaN(R)){
+    solverResult.innerText = "Enter values";
+    return;
+  }
+
+  let I = V / R;
 
   solverResult.innerText =
-    `Current = ${I.toFixed(2)} A
+`Current = ${I.toFixed(2)} A
 Formula: I = V / R
-Step: ${V}/${R}`;
+Step: ${V}/${R} = ${I.toFixed(2)}`;
 }
+
 
 // HELPER
 function suggest(){
-  let g=given.value, f=find.value;
+  let g = given.value;
+  let f = find.value;
 
-  let text="";
+  let text = "";
 
-  if(g==="VR"&&f==="I") text="Use I = V/R";
-  else if(g==="VI"&&f==="R") text="Use R = V/I";
-  else if(g==="IR"&&f==="V") text="Use V = I×R";
-  else text="Invalid";
+  if(g==="VR" && f==="I") text="Use I = V/R";
+  else if(g==="VI" && f==="R") text="Use R = V/I";
+  else if(g==="IR" && f==="V") text="Use V = I×R";
+  else text="Invalid combination";
 
-  formulaResult.innerText=text;
+  formulaResult.innerText = text;
 }
 
-// PRACTICE
-let currentQ={};
+
+// PRACTICE MODE
+let currentQ = {};
+
 function generateQ(){
-  let V=Math.floor(Math.random()*100)+10;
-  let R=Math.floor(Math.random()*10)+1;
+  let V = Math.floor(Math.random()*100)+10;
+  let R = Math.floor(Math.random()*10)+1;
 
-  currentQ={V,R,I:V/R};
+  currentQ = {V, R, I: V/R};
 
-  question.innerText=`Find I if V=${V}V, R=${R}Ω`;
-  answer.innerText="";
+  question.innerText = `Find I if V=${V}V, R=${R}Ω`;
+  answer.innerText = "";
 }
 
 function showAns(){
-  answer.innerText=
-`I=${currentQ.I.toFixed(2)} A
-Formula: V/R`;
+  if(!currentQ.I){
+    answer.innerText = "Generate question first";
+    return;
+  }
+
+  answer.innerText =
+`I = ${currentQ.I.toFixed(2)} A
+Formula: I = V/R
+Step: ${currentQ.V}/${currentQ.R}`;
 }
 
-// CHALLENGE
-let score=0, streak=0, qCount=0;
+
+// CHALLENGE MODE
+let score = 0;
+let streak = 0;
+let qCount = 0;
 
 function startChallenge(){
-  score=0; qCount=0;
+  score = 0;
+  qCount = 0;
   nextQ();
 }
 
 function nextQ(){
-  if(qCount>=5){
-    challengeQ.innerText="Finished!";
+  if(qCount >= 5){
+    challengeQ.innerText = "Challenge Finished!";
     return;
   }
 
-  let V=Math.floor(Math.random()*100)+10;
-  let R=Math.floor(Math.random()*10)+1;
+  let V = Math.floor(Math.random()*100)+10;
+  let R = Math.floor(Math.random()*10)+1;
 
-  currentQ={V,R,I:V/R};
+  currentQ = {V, R, I: V/R};
 
-  challengeQ.innerText=`Q${qCount+1}: V=${V}, R=${R}`;
+  challengeQ.innerText = `Q${qCount+1}: Find I if V=${V}, R=${R}`;
 }
 
 function submitAns(){
-  let user=parseFloat(userAns.value);
+  let user = parseFloat(userAns.value);
+
   if(isNaN(user)) return;
 
-  if(Math.abs(user-currentQ.I)<0.5){
-    score++; streak++;
-  } else streak=0;
+  if(Math.abs(user - currentQ.I) < 0.5){
+    score++;
+    streak++;
+  } else {
+    streak = 0;
+  }
 
   qCount++;
   nextQ();
@@ -221,28 +260,35 @@ function submitAns(){
 }
 
 function updateStats(){
-  let badge="Beginner";
-  if(score>=3) badge="Intermediate";
-  if(score>=5) badge="Pro";
+  let badge = "Beginner";
 
-  stats.innerText=`Score: ${score} | Streak: ${streak} 🔥 | Badge: ${badge}`;
+  if(score >= 3) badge = "Intermediate";
+  if(score >= 5) badge = "Pro";
+
+  stats.innerText =
+`Score: ${score} | Streak: ${streak} 🔥 | Badge: ${badge}`;
 }
 
-// BILL (REALISTIC)
+
+// BILL CALCULATOR
 function calcBill(){
-  let u=units.value;
-  if(!u){ billResult.innerText="Enter units"; return; }
+  let u = parseFloat(units.value);
 
-  let cost=0;
+  if(isNaN(u)){
+    billResult.innerText = "Enter units";
+    return;
+  }
 
-  if(u<=100) cost=u*3;
-  else if(u<=200) cost=100*3+(u-100)*5;
-  else cost=100*3+100*5+(u-200)*7;
+  let cost = 0;
 
-  let fixed=50;
-  let total=cost+fixed;
+  if(u <= 100) cost = u * 3;
+  else if(u <= 200) cost = 100*3 + (u-100)*5;
+  else cost = 100*3 + 100*5 + (u-200)*7;
 
-  billResult.innerText=
+  let fixed = 50;
+  let total = cost + fixed;
+
+  billResult.innerText =
 `Energy Charge = ₹${cost}
 Fixed Charge = ₹${fixed}
 Total Bill = ₹${total}`;
