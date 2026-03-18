@@ -25,7 +25,7 @@
       border-radius: 15px;
     }
 
-    select, input, button {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
@@ -44,15 +44,17 @@
       cursor: pointer;
     }
 
-    h3 {
-      margin-top: 15px;
-    }
-
     .box {
-      margin-top: 15px;
+      margin-top: 10px;
       padding: 10px;
       background: rgba(255,255,255,0.08);
       border-radius: 10px;
+    }
+
+    .stats {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #a5b4fc;
     }
   </style>
 </head>
@@ -61,20 +63,20 @@
 
 <header>
   <h1>⚡ EE Survival Toolkit</h1>
-  <p>Solve numericals faster than ever</p>
+  <p>Learn • Solve • Practice</p>
 </header>
 
 <div class="container">
 
+  <!-- SOLVER -->
   <h3>🔢 Numerical Solver</h3>
   <input id="v" type="number" placeholder="Voltage (V)">
   <input id="r" type="number" placeholder="Resistance (Ω)">
   <button onclick="solve()">Solve</button>
-
   <div class="box" id="solverResult"></div>
 
+  <!-- HELPER -->
   <h3>⚡ What Formula to Use?</h3>
-
   <select id="given">
     <option value="VR">Given: V & R</option>
     <option value="VI">Given: V & I</option>
@@ -82,32 +84,42 @@
   </select>
 
   <select id="find">
-    <option value="I">Find Current (I)</option>
-    <option value="V">Find Voltage (V)</option>
-    <option value="R">Find Resistance (R)</option>
+    <option value="I">Find Current</option>
+    <option value="V">Find Voltage</option>
+    <option value="R">Find Resistance</option>
   </select>
 
   <button onclick="suggest()">Get Formula</button>
-
   <div class="box" id="formulaResult"></div>
 
-  <h3>📚 Exam Mode</h3>
-  <button onclick="generateQ()">Generate Question</button>
+  <!-- EXAM MODE -->
+  <h3>📚 Practice Mode</h3>
+  <button onclick="generateQ()">New Question</button>
   <button onclick="showAns()">Show Answer</button>
 
   <div class="box" id="question"></div>
   <div class="box" id="answer"></div>
 
+  <!-- CHALLENGE -->
+  <h3>🎯 Challenge Mode</h3>
+  <button onclick="startChallenge()">Start Challenge</button>
+
+  <div class="box" id="challengeQ"></div>
+  <input id="userAns" type="number" placeholder="Your Answer (A)">
+  <button onclick="submitAns()">Submit</button>
+
+  <div class="stats" id="stats"></div>
+
 </div>
 
 <script>
 
-// 🔢 Numerical Solver
+// SOLVER
 function solve(){
-  let V = parseFloat(document.getElementById("v").value);
-  let R = parseFloat(document.getElementById("r").value);
+  let V = v.value;
+  let R = r.value;
 
-  if(isNaN(V) || isNaN(R)){
+  if(!V || !R){
     solverResult.innerText = "Enter both values";
     return;
   }
@@ -115,52 +127,107 @@ function solve(){
   let I = V / R;
 
   solverResult.innerText =
-    "Current = " + I.toFixed(2) + " A\n" +
-    "Formula: I = V / R\n" +
-    "Step: " + V + " / " + R + " = " + I.toFixed(2);
+    "Current = " + I.toFixed(2) + " A\nFormula: I = V/R\nStep: " + V + "/" + R;
 }
 
 
-// ⚡ What to Use Helper
+// HELPER
 function suggest(){
   let g = given.value;
   let f = find.value;
 
   let text = "";
 
-  if(g==="VR" && f==="I") text = "Use I = V / R";
-  else if(g==="VI" && f==="R") text = "Use R = V / I";
-  else if(g==="IR" && f==="V") text = "Use V = I × R";
-  else text = "Invalid combination";
+  if(g==="VR" && f==="I") text="Use I = V/R";
+  else if(g==="VI" && f==="R") text="Use R = V/I";
+  else if(g==="IR" && f==="V") text="Use V = I×R";
+  else text="Invalid";
 
   formulaResult.innerText = text;
 }
 
 
-// 📚 Exam Mode
+// PRACTICE MODE
 let currentQ = {};
 function generateQ(){
   let V = Math.floor(Math.random()*100)+10;
   let R = Math.floor(Math.random()*10)+1;
 
-  currentQ.V = V;
-  currentQ.R = R;
-  currentQ.I = V / R;
+  currentQ = {V, R, I: V/R};
 
-  question.innerText = "Find Current if V=" + V + "V and R=" + R + "Ω";
+  question.innerText = `Find I if V=${V}V, R=${R}Ω`;
   answer.innerText = "";
 }
 
 function showAns(){
-  if(!currentQ.I){
-    answer.innerText = "Generate question first";
+  answer.innerText =
+    `I=${currentQ.I.toFixed(2)}A\nFormula: V/R`;
+}
+
+
+// CHALLENGE MODE
+let score = localStorage.getItem("score") || 0;
+let streak = localStorage.getItem("streak") || 0;
+let qCount = 0;
+let correctAns = 0;
+
+updateStats();
+
+function startChallenge(){
+  score = 0;
+  qCount = 0;
+  nextQ();
+}
+
+function nextQ(){
+  if(qCount>=5){
+    endChallenge();
     return;
   }
 
-  answer.innerText =
-    "I = " + currentQ.I.toFixed(2) + " A\n" +
-    "Formula: I = V / R\n" +
-    "Step: " + currentQ.V + "/" + currentQ.R;
+  let V = Math.floor(Math.random()*100)+10;
+  let R = Math.floor(Math.random()*10)+1;
+
+  currentQ = {V, R, I: V/R};
+  challengeQ.innerText = `Q${qCount+1}: Find I if V=${V}, R=${R}`;
+}
+
+function submitAns(){
+  let user = parseFloat(userAns.value);
+
+  if(isNaN(user)) return;
+
+  if(Math.abs(user - currentQ.I) < 0.5){
+    score++;
+    streak++;
+  } else {
+    streak = 0;
+  }
+
+  qCount++;
+  nextQ();
+  saveData();
+  updateStats();
+}
+
+function endChallenge(){
+  challengeQ.innerText = "Challenge Finished!";
+  userAns.value = "";
+}
+
+function saveData(){
+  localStorage.setItem("score", score);
+  localStorage.setItem("streak", streak);
+}
+
+function updateStats(){
+  let badge = "Beginner";
+
+  if(score>=3) badge="Intermediate";
+  if(score>=5) badge="Pro";
+
+  stats.innerText =
+    `Score: ${score} | Streak: ${streak} 🔥 | Badge: ${badge}`;
 }
 
 </script>
