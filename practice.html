@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Practice</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;padding:20px}
+.box{margin-top:10px;background:#1e293b;padding:10px}
+</style>
+</head>
+<body>
+
+<h2>📚 Practice</h2>
+
+<button onclick="gen()">New Question</button>
+<button onclick="show()">Show Answer</button>
+
+<div class="box" id="q"></div>
+<div class="box" id="ans"></div>
+
+<script>
+let data={};
+
+function gen(){
+let V=Math.floor(Math.random()*100)+10;
+let R=Math.floor(Math.random()*10)+1;
+data={V,R,I:V/R};
+
+q.innerText=`Find I if V=${V}, R=${R}`;
+ans.innerText="";
+}
+
+function show(){
+ans.innerText=`I=${data.I.toFixed(2)} A\nFormula: V/R`;
+}
+</script>
+
+</body>
+</html>
