@@ -1,161 +1,200 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>EE Toolkit - Learn & Practice Electrical Engineering</title>
+  <meta charset="UTF-8">
+  <title>EE Toolkit - Free Electrical Engineering Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Free Electrical Engineering Toolkit with calculators, practice questions, and challenge mode for students.">
+  <!-- SEO -->
+  <meta name="description" content="Free Electrical Engineering Calculator for Ohm’s Law, Power, Voltage, Current and Resistance. Practice EE numericals and improve skills.">
 
-<style>
-body{
-  margin:0;
-  font-family:'Segoe UI';
-  background:#0f172a;
-  color:white;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f9;
+      color: #000;
+    }
 
-/* NAVBAR */
-.navbar{
-  display:flex;
-  justify-content:space-between;
-  padding:15px 25px;
-  background:rgba(255,255,255,0.05);
-}
+    /* NAVBAR */
+    nav {
+      background: #007bff;
+      padding: 15px;
+      text-align: center;
+    }
 
-.nav-links a{
-  margin-left:15px;
-  color:white;
-  text-decoration:none;
-}
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-/* HERO */
-.hero{
-  text-align:center;
-  padding:50px 20px;
-}
+    nav a:hover {
+      text-decoration: underline;
+    }
 
-.hero h1{
-  font-size:32px;
-}
+    /* CONTAINER */
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
 
-/* QUICK NAV */
-.quick-nav{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:20px;
-}
+    h1 {
+      text-align: center;
+      color: #007bff;
+    }
 
-.quick-nav button{
-  background:#22c55e;
-  border:none;
-  padding:10px 15px;
-  border-radius:20px;
-  cursor:pointer;
-}
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
 
-/* CONTENT */
-.container{
-  padding:20px;
-}
+    /* FIXED INPUT */
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #fff !important;
+      color: #000 !important;
+      font-size: 16px;
+    }
 
-.card{
-  background:#1e293b;
-  padding:20px;
-  border-radius:12px;
-  margin-top:20px;
-  text-align:center;
-}
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-button{
-  padding:10px 15px;
-  border:none;
-  border-radius:8px;
-  background:#22c55e;
-  margin-top:10px;
-  cursor:pointer;
-}
+    button:hover {
+      background: #0056b3;
+    }
 
-/* FEEDBACK */
-textarea{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  margin-top:10px;
-}
-</style>
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: bold;
+    }
 
+    .ad {
+      margin: 25px 0;
+      padding: 20px;
+      text-align: center;
+      border: 1px dashed #ccc;
+      color: #888;
+    }
+
+    .seo {
+      margin-top: 40px;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <div>⚡ EE Toolkit</div>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="calculations.html">Calculations</a>
-    <a href="practice.html">Practice</a>
-    <a href="challenge.html">Challenge</a>
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Calculators</a>
+    <a href="#">Practice</a>
+    <a href="#">Challenge</a>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="container">
+    <h1>⚡ EE Calculator</h1>
+
+    <label>Voltage (V)</label>
+    <input type="number" id="V" placeholder="Enter Voltage">
+
+    <label>Current (A)</label>
+    <input type="number" id="I" placeholder="Enter Current">
+
+    <label>Resistance (Ω)</label>
+    <input type="number" id="R" placeholder="Enter Resistance">
+
+    <label>Power (W)</label>
+    <input type="number" id="P" placeholder="Enter Power">
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="result" id="result">
+      Result will appear here
+    </div>
+
+    <!-- AdSense Placeholder -->
+    <div class="ad">AdSense Ad Here</div>
+
+    <!-- SEO CONTENT -->
+    <div class="seo">
+      <h2>Ohm's Law Calculator</h2>
+      <p>
+        This free electrical engineering calculator helps you calculate Voltage, Current, Resistance, and Power using Ohm’s Law.
+        It is useful for diploma students, BTech students, and professionals.
+      </p>
+
+      <h3>Formulas:</h3>
+      <ul>
+        <li>V = I × R</li>
+        <li>I = V / R</li>
+        <li>R = V / I</li>
+        <li>P = V × I</li>
+      </ul>
+
+      <h3>Example:</h3>
+      <p>
+        If Voltage = 10V and Current = 2A, then Resistance = 5Ω and Power = 20W.
+      </p>
+    </div>
+
   </div>
-</div>
 
-<!-- HERO -->
-<div class="hero">
-  <h1>⚡ Electrical Engineering Made Simple</h1>
-  <p>Calculate • Practice • Challenge Yourself</p>
+  <!-- SCRIPT -->
+  <script>
+    function calculate() {
+      let V = parseFloat(document.getElementById("V").value);
+      let I = parseFloat(document.getElementById("I").value);
+      let R = parseFloat(document.getElementById("R").value);
+      let P = parseFloat(document.getElementById("P").value);
 
-  <!-- QUICK NAV -->
-  <h3>⚡ Quick Access</h3>
-  <div class="quick-nav">
-    <button onclick="go('calculations.html')">⚡ Ohm Law</button>
-    <button onclick="go('calculations.html')">🔋 Power</button>
-    <button onclick="go('calculations.html')">🔁 Transformer</button>
-    <button onclick="go('practice.html')">📚 Practice</button>
-    <button onclick="go('challenge.html')">🔥 Challenge</button>
-  </div>
-</div>
+      let result = "";
 
-<!-- CONTENT -->
-<div class="container">
+      if (!isNaN(V) && !isNaN(I)) {
+        result += "Resistance = " + (V/I).toFixed(2) + " Ω\n";
+        result += "Power = " + (V*I).toFixed(2) + " W";
+      }
+      else if (!isNaN(V) && !isNaN(R)) {
+        result += "Current = " + (V/R).toFixed(2) + " A\n";
+        result += "Power = " + (V*V/R).toFixed(2) + " W";
+      }
+      else if (!isNaN(I) && !isNaN(R)) {
+        result += "Voltage = " + (I*R).toFixed(2) + " V\n";
+        result += "Power = " + (I*I*R).toFixed(2) + " W";
+      }
+      else {
+        result = "Enter at least 2 values";
+      }
 
-<div class="card">
-  <h3>⚡ Calculations</h3>
-  <p>Solve formulas with step-by-step solutions</p>
-  <button onclick="go('calculations.html')">Open</button>
-</div>
-
-<div class="card">
-  <h3>📚 Practice Mode</h3>
-  <p>Practice unlimited numericals with score</p>
-  <button onclick="go('practice.html')">Start Practice</button>
-</div>
-
-<div class="card">
-  <h3>🔥 Challenge Mode</h3>
-  <p>Attempt 10 questions under time pressure</p>
-  <button onclick="go('challenge.html')">Start Challenge</button>
-</div>
-
-<div class="card">
-  <h3>💬 Feedback</h3>
-  <p>Help us improve</p>
-  <textarea placeholder="Write your feedback..."></textarea>
-  <button onclick="thanks()">Submit</button>
-</div>
-
-</div>
-
-<script>
-function go(page){
-  window.location.href=page;
-}
-
-function thanks(){
-  alert("Thank you for your feedback ❤️");
-}
-</script>
+      document.getElementById("result").innerText = result;
+    }
+  </script>
 
 </body>
 </html>
+
