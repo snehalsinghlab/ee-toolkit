@@ -1,2 +1,160 @@
-e27ab46179eb7c7658cdf007da8bfbdeac75981a
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EE Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 50px 20px;
+    }
+
+    .calculator-container {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      max-width: 450px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      color: black; /* text inside input */
+      background: rgba(255, 255, 255, 0.8); /* semi-glass background */
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      width: 100%;
+      margin-top: 5px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      font-size: 16px;
+    }
+
+    input:focus {
+      box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+    }
+
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e9ecef;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .ad-space {
+      margin: 20px 0;
+      height: 90px;
+      background-color: #f1f1f1;
+      border: 1px dashed #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator-container">
+    <h1>Electrical Engineering Calculator</h1>
+
+    <!-- Ohm's Law -->
+    <label for="voltage">Voltage (V)</label>
+    <input type="number" id="voltage" placeholder="Enter voltage">
+
+    <label for="current">Current (A)</label>
+    <input type="number" id="current" placeholder="Enter current">
+
+    <label for="resistance">Resistance (Ω)</label>
+    <input type="number" id="resistance" placeholder="Enter resistance">
+
+    <!-- Power -->
+    <label for="power">Power (W)</label>
+    <input type="number" id="power" placeholder="Enter power">
+
+    <button onclick="calculateAll()">Calculate</button>
+
+    <div class="result" id="result">Result will appear here</div>
+
+    <div class="ad-space">Ad goes here (Google AdSense)</div>
+  </div>
+
+  <script>
+    function calculateAll() {
+      const V = parseFloat(document.getElementById('voltage').value);
+      const I = parseFloat(document.getElementById('current').value);
+      const R = parseFloat(document.getElementById('resistance').value);
+      const P = parseFloat(document.getElementById('power').value);
+
+      let resultText = '';
+
+      // Ohm's Law calculations
+      if (!isNaN(V) && !isNaN(I)) {
+        resultText += `Resistance = ${(V/I).toFixed(2)} Ω\n`;
+      } else if (!isNaN(V) && !isNaN(R)) {
+        resultText += `Current = ${(V/R).toFixed(2)} A\n`;
+      } else if (!isNaN(I) && !isNaN(R)) {
+        resultText += `Voltage = ${(I*R).toFixed(2)} V\n`;
+      }
+
+      // Power calculations
+      if (!isNaN(V) && !isNaN(I)) {
+        resultText += `Power = ${(V*I).toFixed(2)} W`;
+      } else if (!isNaN(I) && !isNaN(R)) {
+        resultText += `Power = ${(I*I*R).toFixed(2)} W`;
+      } else if (!isNaN(V) && !isNaN(R)) {
+        resultText += `Power = ${(V*V/R).toFixed(2)} W`;
+      }
+
+      if (resultText === '') {
+        resultText = 'Please enter at least two values to calculate the others.';
+      }
+
+      document.getElementById('result').innerText = resultText;
+    }
+  </script>
+</body>
+</html>
 
